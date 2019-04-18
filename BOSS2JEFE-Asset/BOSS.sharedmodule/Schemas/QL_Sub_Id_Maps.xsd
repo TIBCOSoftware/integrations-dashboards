@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<xsd:schema xmlns:QL_Sub_Id_Maps="http://www.example.com/namespaces/tns/1546540513420" xmlns:extns="http://www.example.com/namespaces/tns/1546540242181" xmlns:tibex="http://www.tibco.com/bpel/2007/extensions" xmlns:xsd="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" targetNamespace="http://www.example.com/namespaces/tns/1546540513420">
+    <xsd:import namespace="http://www.example.com/namespaces/tns/1546540242181"/>
+    <xsd:element name="QL_Sub_Id_Maps">
+    <xsd:complexType>
+      <xsd:sequence>
+      		<xsd:element maxOccurs="1" minOccurs="1" name="size" type="xsd:integer"/>
+            <xsd:element maxOccurs="unbounded" minOccurs="0" ref="extns:QL_Sub_Id_Map"/>
+      </xsd:sequence>
+    </xsd:complexType>
+  </xsd:element>
+</xsd:schema>
