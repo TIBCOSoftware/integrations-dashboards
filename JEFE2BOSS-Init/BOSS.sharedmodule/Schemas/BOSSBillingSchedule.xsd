@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<xsd:schema xmlns:extns="urn:sobject.partner.soap.sforce.com" 
+			xmlns:tibex="http://www.tibco.com/bpel/2007/extensions" 
+			xmlns:tns="http://www.example.org/1532541525972"
+			xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+			xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+			elementFormDefault="unqualified"
+			targetNamespace="http://www.example.org/1532541525972">
+    <xsd:import namespace="urn:sobject.partner.soap.sforce.com" schemaLocation="../SalesforceResources/BOSS_Salesforce_Metadata.xsd"/>
+	<xsd:element name="BOSS_Billing_Invoice_Schedule">
+    	<xsd:complexType>
+      		<xsd:sequence>
+                <xsd:element name="BOSS_Billing_Invoice_Schedule" type="extns:Billing_Invoice_Schedule__c"/>
+            </xsd:sequence>
+    	</xsd:complexType>
+  	</xsd:element>
+</xsd:schema>

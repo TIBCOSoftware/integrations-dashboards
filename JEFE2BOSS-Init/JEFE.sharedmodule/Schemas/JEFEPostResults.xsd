@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<xsd:schema xmlns:extns="http://www.force.com/2009/06/asyncapi/dataload" xmlns:tibex="http://www.tibco.com/bpel/2007/extensions" xmlns:tns="http://www.example.com/namespaces/tns/1518158110506" xmlns:xsd="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" targetNamespace="http://www.example.com/namespaces/tns/1518158110506">
+    <xsd:import namespace="http://www.force.com/2009/06/asyncapi/dataload"/>
+    <xsd:element name="JEFEPostResults">
+    <xsd:complexType>
+      <xsd:sequence>
+                <xsd:element minOccurs="0" ref="extns:results"/>
+            </xsd:sequence>
+    </xsd:complexType>
+  </xsd:element>
+</xsd:schema>
