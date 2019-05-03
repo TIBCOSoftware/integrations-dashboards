@@ -1,5 +1,5 @@
-const _ = require('lodash');
 const util = require('util');
+const _ = require('lodash');
 const { logInfo, logError } = require('../../util/logger');
 const salesforce = require('../../services/salesforce');
 const statements = require('../../db/statements');
