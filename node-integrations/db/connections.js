@@ -11,21 +11,12 @@ connections.init = credentials => {
   });
 };
 
-connections.initSandbox = () => {
+connections.initFromEnv = () => {
   return connections.init({
-    host: process.env.SANDBOX_DB_HOST,
-    user: process.env.SANDBOX_DB_USER,
-    password: process.env.SANDBOX_DB_PASS,
-    database: process.env.SANDBOX_DB_DATABASE
-  });
-};
-
-connections.initProduction = () => {
-  return connections.init({
-    host: process.env.PRODUCTION_DB_HOST,
-    user: process.env.PRODUCTION_DB_USER,
-    password: process.env.PRODUCTION_DB_PASS,
-    database: process.env.PRODUCTION_DB_DATABASE
+    host: process.env.DB_HOST,
+    user: process.env.DB_USER,
+    password: process.env.DB_PASS,
+    database: process.env.DB_DATABASE
   });
 };
 
