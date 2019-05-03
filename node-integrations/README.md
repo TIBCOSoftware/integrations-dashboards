@@ -1,4 +1,4 @@
-# Integrations
+# Node Integrations
 
 ## 1. Setup
 
@@ -21,7 +21,7 @@ Deploying is very simple. Once you are ready to deploy, simply run the following
 1. `npm run build`
 2. `npm run deploy`
 
-If you receive any issues, you will need to run `tibcli login` to login to your user.
+If you receive any issues, you will need to login to your user. You can enter your credentials in the prompt, or run `tibcli login` to login manually.
 
 ## 2. Wish List
 
