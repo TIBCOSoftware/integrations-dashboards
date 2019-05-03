@@ -4,7 +4,9 @@
   "version": "1.0.0",
   "author": "Christian Florez <cflorez@tibco.com>",
   "dependencies": {
-    "dotenv": "^4.0.0",
+    "adm-zip": "^0.4.13",
+    "cron": "^1.7.1",
+    "custom-env": "^1.0.0",
     "jsforce": "^1.9.1",
     "lodash": "^4.17.11",
     "promise-mysql": "^3.3.1"
@@ -12,7 +14,8 @@
   "scripts": {
     "start": "node app.js",
     "build": "zip -r ./deploy/nodeIntegrations.zip . --exclude \"node_modules/*\" \"*.git*\" \"deploy/*\"",
-    "deploy": "cd deploy && tibcli app push"
+    "deploy": "cd deploy && tibcli app push",
+    "testBuild": "node build.js"
   },
   "main": "app.js",
   "devDependencies": {

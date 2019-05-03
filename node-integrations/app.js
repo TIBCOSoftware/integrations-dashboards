@@ -1,19 +1,20 @@
-require('dotenv').config();
-
+// require('custom-env').env(process.env.NODE_ENV || 'development');
+require('custom-env').env();
 const tasks = require('./tasks');
+const scheduler = require('./util/scheduler');
+const { logInfo } = require('./util/logger');
 
 const main = async () => {
-  // schedule timers here
-  // await tasks.boss2Jefe.assetIntegration.run();
-  // await tasks.boss2dw.licenseIntegration.run();
-  console.log('_____________________________');
-  console.log('_____________________________');
-  console.log('_____________________________');
+  logInfo('Node Integrations Initialized');
 
-  console.log('PROJECT IS RUNNING!!!!!!!!!!');
-  console.log('_____________________________');
-  console.log('_____________________________');
-  console.log('_____________________________');
+  scheduler.schedule(
+    scheduler.cron.every30Minutes,
+    async () => {
+      await tasks.boss2Jefe.assetIntegration.run();
+    },
+    'BOSS2JEFE Asset Integration'
+  );
+  // console.log(process.env);
 };
 
 main();
