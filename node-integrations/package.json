@@ -4,7 +4,6 @@
   "version": "1.0.0",
   "author": "Christian Florez <cflorez@tibco.com>",
   "dependencies": {
-    "adm-zip": "^0.4.13",
     "cron": "^1.7.1",
     "custom-env": "^1.0.0",
     "jsforce": "^1.9.1",
