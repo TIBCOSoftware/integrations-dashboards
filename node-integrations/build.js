@@ -35,13 +35,12 @@ buildAgent.createZipFile = (taskName, environment) => {
 
   buildAgent.updateEnvFile(taskName, environment);
   buildAgent.runZipCmd(taskName, environment);
-  buildAgent.resetEnvFile(taskName, environment);
+  buildAgent.clearEnvFile();
 };
 
 buildAgent.updateEnvFile = (taskName, environment) => {
   const file = fs.readFileSync(`.env.${environment}`, 'utf8');
-  fs.renameSync(`.env.${environment}`, `.env.${environment}.bak`);
-  fs.writeFileSync(`.env.${environment}`, `${file}\nTASK_NAME=${taskName}\nNODE_ENV=${environment}`);
+  fs.writeFileSync(`.env`, `${file}\nTASK_NAME=${taskName}\nNODE_ENV=${environment}`);
 };
 
 buildAgent.runZipCmd = (taskName, environment) => {
@@ -56,26 +55,13 @@ buildAgent.runZipCmd = (taskName, environment) => {
     fs.unlinkSync(zipFile);
   }
 
-  const envExclusions = buildAgent.createEnvExclusions(environment);
-  execSync(`zip -r ${zipFile} . --exclude "node_modules/*" "*.git*" "deploy/*" ${envExclusions}`);
+  execSync(
+    `zip -r ${zipFile} . --exclude "node_modules/*" "*.git*" "deploy/*" ".env.development" ".env.sandbox" ".env.production"`
+  );
 };
 
-buildAgent.createEnvExclusions = environment => {
-  switch (environment) {
-    case 'development':
-      return '.env.sandbox .env.production .env.development.bak';
-    case 'sandbox':
-      return '.env.sandbox.bak .env.production .env.development';
-    case 'production':
-      return '.env.sandbox .env.production.bak .env.development';
-    default:
-      return '';
-  }
-};
-
-buildAgent.resetEnvFile = (taskName, environment) => {
-  fs.unlinkSync(`.env.${environment}`);
-  fs.renameSync(`.env.${environment}.bak`, `.env.${environment}`);
+buildAgent.clearEnvFile = () => {
+  fs.unlinkSync(`.env`);
 };
 
 buildAgent.createManifestJson = (taskName, environment) => {
