@@ -12,16 +12,17 @@ const buildAgent = {};
  * Defaults to development
  */
 buildAgent.init = () => {
-  const environment = process.argv[2].toLowerCase() || 'development';
+  const environment = process.argv[2] && process.argv[2].toLowerCase();
 
   if (!['development', 'production', 'sandbox'].includes(environment)) {
+    console.log('Usage: npm run build -- {environment}');
     console.log('Please specify one of the following environments: development, production, sandbox');
     return;
   }
 
   console.log('Begin building assets...');
 
-  _.map(taskList, taskName => {
+  _.each(taskList, taskName => {
     buildAgent.createZipFile(taskName, environment);
     buildAgent.createManifestJson(taskName, environment);
   });
@@ -41,12 +42,10 @@ buildAgent.updateEnvFile = (taskName, environment) => {
   const file = fs.readFileSync(`.env.${environment}`, 'utf8');
   fs.renameSync(`.env.${environment}`, `.env.${environment}.bak`);
   fs.writeFileSync(`.env.${environment}`, `${file}\nTASK_NAME=${taskName}\nNODE_ENV=${environment}`);
-  console.log(file);
-  console.log(`${file}\nTASK_NAME=${taskName}`);
 };
 
 buildAgent.runZipCmd = (taskName, environment) => {
-  const directory = `./deploy/${taskName}`;
+  const directory = `./deploy/${taskName}-${environment}`;
   const zipFile = `${directory}/${taskName}.zip`;
 
   if (!fs.existsSync(directory)) {
@@ -58,9 +57,7 @@ buildAgent.runZipCmd = (taskName, environment) => {
   }
 
   const envExclusions = buildAgent.createEnvExclusions(environment);
-  execSync(`zip -r ${zipFile} . --exclude "node_modules/*" "*.git*" "deploy/*" ${envExclusions}`, {
-    stdio: 'inherit'
-  });
+  execSync(`zip -r ${zipFile} . --exclude "node_modules/*" "*.git*" "deploy/*" ${envExclusions}`);
 };
 
 buildAgent.createEnvExclusions = environment => {
@@ -81,12 +78,9 @@ buildAgent.resetEnvFile = (taskName, environment) => {
   fs.renameSync(`.env.${environment}.bak`, `.env.${environment}`);
 };
 
-buildAgent.createManifestJson = taskName => {
-  /**
-   * 1. update name based on taskName
-   * 2. write to deploy/${taskName}/manifest.json
-   *
-   */
+buildAgent.createManifestJson = (taskName, environment) => {
+  manifest.name = `${taskName}-${environment}`;
+  fs.writeFileSync(`./deploy/${taskName}-${environment}/manifest.json`, JSON.stringify(manifest, null, 2));
 };
 
 buildAgent.init();
