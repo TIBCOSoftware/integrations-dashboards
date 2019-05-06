@@ -16,12 +16,19 @@ You will need a few prerequisites before you can run this repository.
 
 ## 2. Deploying
 
-Deploying is very simple. Once you are ready to deploy, simply run the following commands
+To deploy, first run the following script:
 
-1. `npm run build`
-2. `npm run deploy`
+`npm run build -- {environment}`
+
+Environment can either be development, production, or sandbox. Once all assets are built, you can run the following argument:
+
+`npm run deploy -- {environment} [${taskName}]`
+
+Environment valid options are the same as in the previous command. Task name can be any of the entries found in tasks/taskList.js. If you do not specify a taskName, every single task will be pushed one by one to TIBCO Cloud /Integration.
 
 If you receive any issues, you will need to login to your user. You can enter your credentials in the prompt, or run `tibcli login` to login manually.
+
+NOTE: Currently the build stage will only work on machines running a bash shell, as it utilizes a native bash zipping command.
 
 ## 2. Wish List
 

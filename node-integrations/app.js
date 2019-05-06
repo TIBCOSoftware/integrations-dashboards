@@ -1,9 +1,16 @@
-require('custom-env').env(process.env.NODE_ENV || 'development');
+const dotenv = require('dotenv');
+const customEnv = require('custom-env');
 const tasks = require('./tasks');
 const scheduler = require('./util/scheduler');
 const { logInfo } = require('./util/logger');
 
 const main = async () => {
+  const config = dotenv.config();
+
+  if (config.error) {
+    customEnv.env(process.env.NODE_ENV || 'development');
+  }
+
   logInfo('Node Integrations Initialized');
 
   const { TASK_NAME } = process.env;
