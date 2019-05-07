@@ -1,5 +1,5 @@
-const boss2Dw = require('./boss2Dw');
-const boss2Jefe = require('./boss2Jefe');
+const boss2Dw = require('./boss2dw');
+const boss2Jefe = require('./boss2jefe');
 
 module.exports = {
   boss2Dw,
