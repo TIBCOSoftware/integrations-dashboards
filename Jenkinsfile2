@@ -1,0 +1,10 @@
+node {
+    powershell 'Write-Output "Hello, World!"'
+	
+	git url: "https://github.com/TIBCOSoftware/integrations-dashboards.git",
+                    credentialsId: '1f6ddd15-ed53-40c5-8482-cf6f6d605c10',
+                    branch: 'master'
+                    
+    sh "git merge dev"
+    sh "git push origin master"
+}
