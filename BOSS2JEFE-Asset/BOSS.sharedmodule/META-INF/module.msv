@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<msv:DocumentRoot xmlns:msv="http://tns.tibco.com/bw/model/core/moduleSV">
-  <moduleSharedVariables>
-    <moduleSharedVariable name="LastUpdateTimestamp" type="{http://www.w3.org/2001/XMLSchema}string" initialValueMode="none"/>
-    <moduleSharedVariable name="LastUpdateDate" type="{http://www.w3.org/2001/XMLSchema}string" initialValueMode="none"/>
-  </moduleSharedVariables>
-</msv:DocumentRoot>
