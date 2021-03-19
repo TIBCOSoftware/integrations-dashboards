@@ -30,14 +30,14 @@ quotesTest = async(quoteId) => {
 
     // check if the approval is recalled
     try {
-      submit = await driver.wait(until.elementLocated(By.xpath("//button[@name='SBQQ__Quote__c.AASubmit']")), 10000)
+      submit = await driver.wait(until.elementLocated(By.xpath("//button[@name='SBQQ__Quote__c.AASubmit']")), 15000)
     }
     catch (e) {
       console.log("Already Submitted!")
     }
 
     // check status & recordType before submission
-    await (await driver.wait(until.elementLocated(By.xpath("//div/span[. = 'Status']/following::lightning-formatted-text")), 10000))
+    await (await driver.wait(until.elementLocated(By.xpath("//div/span[. = 'Status']/following::lightning-formatted-text")), 15000))
       .getText()
       .then((text) => {
         if (text === '' || text === 'Draft') {
@@ -46,7 +46,7 @@ quotesTest = async(quoteId) => {
         else throw new Error('Status not checked bofore submission!');
       });
 
-    await driver.wait(until.elementLocated(By.xpath("//span[@force-recordtype_recordtype='']")), 10000)
+    await driver.wait(until.elementLocated(By.xpath("//span[@force-recordtype_recordtype='']")), 15000)
       .getText()
       .then(text => {
         if (text === 'Draft Quote') {
@@ -63,10 +63,10 @@ quotesTest = async(quoteId) => {
       })
     
     // check recall button
-    await driver.wait(until.elementLocated(By.xpath("//button[@name='SBQQ__Quote__c.AARecall']")),10000);
+    await driver.wait(until.elementLocated(By.xpath("//button[@name='SBQQ__Quote__c.AARecall']")),15000);
     
     // check status & recordType after submission
-    await (await driver.wait(until.elementLocated(By.xpath("//div/span[. = 'Status']/following::lightning-formatted-text")), 10000))
+    await (await driver.wait(until.elementLocated(By.xpath("//div/span[. = 'Status']/following::lightning-formatted-text")), 15000))
       .getText()
       .then((text) => {
         if (text === 'Approved') {
@@ -78,7 +78,7 @@ quotesTest = async(quoteId) => {
         console.log(e);
       });
 
-    await driver.wait(until.elementLocated(By.xpath("//span[@force-recordtype_recordtype='']")), 10000)
+    await driver.wait(until.elementLocated(By.xpath("//span[@force-recordtype_recordtype='']")), 15000)
       .getText()
       .then(text => {
         if (text === 'Approved Quote') {
