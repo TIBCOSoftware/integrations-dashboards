@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<jndi:namedResource xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:jdbc="http://xsd.tns.tibco.com/amf/models/sharedresource/jdbc" xmlns:jndi="http://xsd.tns.tibco.com/amf/models/sharedresource/jndi" xmlns:subject="http://xsd.tns.tibco.com/trinity/models/identity/subject" xmi:id="__f_8kaxgEeiKyPVhVt9msQ" name="jefe.sharedmodule.JDBCConnection" type="jdbc:JdbcDataSource">
-  <jndi:reference xmi:id="__hB3UKxgEeiKyPVhVt9msQ" key="subjectJndiName" type="subject:SubjectConfiguration" value=""/>
-  <jndi:configuration xsi:type="jdbc:JdbcDataSource" xmi:id="__hB3UaxgEeiKyPVhVt9msQ" username="etl" password="#!YxLqO75guPC3HLwuDWbmh/PawyC0F/paOnMqOpA2aP5wGu2BYG5MdPLNDsumyWdF">
-    <connectionConfig xsi:type="jdbc:NonXaConnection" xmi:id="__hB3UqxgEeiKyPVhVt9msQ" jdbcDriver="org.mariadb.jdbc.Driver" dbURL="jdbc:mariadb://dashboard-dw.cfwvvqngiagi.us-west-2.rds.amazonaws.com:3306/staging_tables"/>
-    <connectionProperties xmi:id="_Gwhu4DSgEemz2NF_7S54zQ" key="jarFile" value="mariadb"/>
-  </jndi:configuration>
-</jndi:namedResource>

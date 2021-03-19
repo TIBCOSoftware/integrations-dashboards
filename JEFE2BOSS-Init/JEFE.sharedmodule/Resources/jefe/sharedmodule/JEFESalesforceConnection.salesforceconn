@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<jndi:namedResource xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:jndi="http://xsd.tns.tibco.com/amf/models/sharedresource/jndi" xmlns:salesforceconnection="http://ns.tibco.com/bw/palette/salesforceconnection" xmi:id="_CyIvEQXWEei24acnuAGOVQ" name="jefe.sharedmodule.JEFESalesforceConnection" type="salesforceconnection:SalesforceConnection">
-  <jndi:configuration xsi:type="salesforceconnection:SalesforceConnection" xmi:id="_CySgEAXWEei24acnuAGOVQ" wsdlFilePath="/SalesforceResources/partner_35_0.wsdl" serverURL="https://tibcocpq--sandbox.cs77.my.salesforce.com/services/Soap/u/35.0">
-    <substitutionBindings xmi:id="_6lBsUCJ0EeiEOZzt6MHQyA" template="serverURL" propName="JEFEServerUrl"/>
-    <substitutionBindings xmi:id="_71RMMCJ0EeiEOZzt6MHQyA" template="userName" propName="JEFEUsername"/>
-    <substitutionBindings xmi:id="_95ixECJ0EeiEOZzt6MHQyA" template="password" propName="JEFEPassword"/>
-  </jndi:configuration>
-</jndi:namedResource>
