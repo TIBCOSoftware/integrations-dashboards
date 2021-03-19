@@ -94,6 +94,9 @@ quotesTest = async(quoteId) => {
     await driver.wait(until.elementLocated(By.xpath("//button[@name='SBQQ__Quote__c.AARecall']")),15000)
       .click()
       .then(() => console.log("Recalled!"));
+
+    // check submit button
+    await driver.wait(until.elementLocated(By.xpath("//button[@name='SBQQ__Quote__c.AASubmit']")),15000);
     
     // check status & recordType after recalled
     await (await driver.wait(until.elementLocated(By.xpath("//div/span[. = 'Status']/following::lightning-formatted-text")), 15000))
