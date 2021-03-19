@@ -94,7 +94,12 @@ quotesTest = async(quoteId) => {
 }
 
 // all quotes need to be tested
-const quoteIds = ['a0p6s000000tdivAAA'];
-quoteIds.forEach(id => {
-    quotesTest(id);
-})
+// const quoteIds = ['a0p6s000000tdivAAA'];
+// quoteIds.forEach(id => {
+//     quotesTest(id);
+// })
+const args = process.argv.slice(2);
+args.forEach(arg => {
+    console.log(arg);
+    quotesTest(arg);
+});
