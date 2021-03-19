@@ -1,1 +1,1 @@
-# integrations-dashboards
+# integrations
