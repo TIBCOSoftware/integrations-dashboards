@@ -90,14 +90,35 @@ quotesTest = async(quoteId) => {
         console.log(e);
       });
 
+    // click recall button
+    await driver.wait(until.elementLocated(By.xpath("//button[@name='SBQQ__Quote__c.AARecall']")),15000)
+      .click()
+      .then(() => console.log("Recalled!"));
+    
+    // check status & recordType after recalled
+    await (await driver.wait(until.elementLocated(By.xpath("//div/span[. = 'Status']/following::lightning-formatted-text")), 15000))
+      .getText()
+      .then((text) => {
+        if (text === '' || text === 'Draft') {
+          console.log("Status checked after recalled!");
+        }
+        else throw new Error('Status not checked after recalled!');
+      });
+
+    await driver.wait(until.elementLocated(By.xpath("//span[@force-recordtype_recordtype='']")), 15000)
+      .getText()
+      .then(text => {
+        if (text === 'Draft Quote') {
+          console.log("Record Type checked after recalled!");
+        }
+        else throw new Error('Record Type not after recalled!');
+      });
+
+
+
     driver.quit();
 }
 
-// all quotes need to be tested
-// const quoteIds = ['a0p6s000000tdivAAA'];
-// quoteIds.forEach(id => {
-//     quotesTest(id);
-// })
 const args = process.argv.slice(2);
 args.forEach(arg => {
     console.log(arg);
