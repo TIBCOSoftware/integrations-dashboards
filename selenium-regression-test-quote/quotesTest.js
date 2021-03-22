@@ -30,14 +30,14 @@ quotesTest = async(quoteId) => {
 
     // check if the approval is recalled
     try {
-      submit = await driver.wait(until.elementLocated(By.xpath("//button[@name='SBQQ__Quote__c.AASubmit']")), 15000)
+      submit = await driver.wait(until.elementLocated(By.xpath("//button[@name='SBQQ__Quote__c.AASubmit']")), 20000)
     }
     catch (e) {
       console.log("Already Submitted!")
     }
 
     // check status & recordType before submission
-    await (await driver.wait(until.elementLocated(By.xpath("//div/span[. = 'Status']/following::lightning-formatted-text")), 15000))
+    await (await driver.wait(until.elementLocated(By.xpath("//div/span[. = 'Status']/following::lightning-formatted-text")), 20000))
       .getText()
       .then((text) => {
         if (text === '' || text === 'Draft') {
@@ -46,7 +46,7 @@ quotesTest = async(quoteId) => {
         else throw new Error('Status not checked bofore submission!');
       });
 
-    await driver.wait(until.elementLocated(By.xpath("//span[@force-recordtype_recordtype='']")), 15000)
+    await driver.wait(until.elementLocated(By.xpath("//span[@force-recordtype_recordtype='']")), 20000)
       .getText()
       .then(text => {
         if (text === 'Draft Quote') {
@@ -56,7 +56,7 @@ quotesTest = async(quoteId) => {
       });
     
     // submit for approval
-    await driver.wait(until.elementLocated(By.xpath("//button[@name='SBQQ__Quote__c.AASubmit']")), 15000)
+    await driver.wait(until.elementLocated(By.xpath("//button[@name='SBQQ__Quote__c.AASubmit']")), 20000)
       .click()
       .then(() => {
         console.log("Submitted!");
