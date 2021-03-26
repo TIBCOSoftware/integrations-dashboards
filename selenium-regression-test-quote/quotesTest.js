@@ -28,7 +28,6 @@ quotesTest = async(quoteId, action) => {
     // get quote by url (id)
     await (await driver).get('https://tibcocpq--sandbox.lightning.force.com/lightning/r/SBQQ__Quote__c/'+ quoteId + '/view');
 
-<<<<<<< HEAD
     // action: submit --- check - submit - check
     if (action === 'submit') {
 
@@ -133,72 +132,6 @@ quotesTest = async(quoteId, action) => {
 
       // click recall button
       await (await driver.wait(until.elementLocated(By.xpath("//button[@name='SBQQ__Quote__c.AARecall']")),10000))
-=======
-    // check if the approval is recalled
-    try {
-      submit = await driver.wait(until.elementLocated(By.xpath("//button[@name='SBQQ__Quote__c.AASubmit']")), 20000)
-    }
-    catch (e) {
-      console.log("Already Submitted!")
-    }
-
-    // check status & recordType before submission
-    await (await driver.wait(until.elementLocated(By.xpath("//div/span[. = 'Status']/following::lightning-formatted-text")), 20000))
-      .getText()
-      .then((text) => {
-        if (text === '' || text === 'Draft') {
-          console.log("Status checked before submission!");
-        }
-        else throw new Error('Status not checked bofore submission!');
-      });
-
-    await driver.wait(until.elementLocated(By.xpath("//span[@force-recordtype_recordtype='']")), 20000)
-      .getText()
-      .then(text => {
-        if (text === 'Draft Quote') {
-          console.log("Record Type checked before submission!");
-        }
-        else throw new Error('Record Type not checked bofore submission!');
-      });
-    
-    // submit for approval
-    await driver.wait(until.elementLocated(By.xpath("//button[@name='SBQQ__Quote__c.AASubmit']")), 20000)
-      .click()
-      .then(() => {
-        console.log("Submitted!");
-      })
-    
-    // check recall button
-    await driver.wait(until.elementLocated(By.xpath("//button[@name='SBQQ__Quote__c.AARecall']")),15000);
-    
-    // check status & recordType after submission
-    await (await driver.wait(until.elementLocated(By.xpath("//div/span[. = 'Status']/following::lightning-formatted-text")), 15000))
-      .getText()
-      .then((text) => {
-        if (text === 'Approved') {
-          console.log("Status checked after submission!");
-        }
-        else throw new Error('Status not checked after submission!    ' + text);
-      })
-      .catch(e => {
-        console.log(e);
-      });
-
-    await driver.wait(until.elementLocated(By.xpath("//span[@force-recordtype_recordtype='']")), 15000)
-      .getText()
-      .then(text => {
-        if (text === 'Approved Quote') {
-          console.log("Record Type checked after submission!");
-        }
-        else throw new Error('Record Type not checked after submission!');
-      })
-      .catch(e => {
-        console.log(e);
-      });
-
-    // click recall button
-    await driver.wait(until.elementLocated(By.xpath("//button[@name='SBQQ__Quote__c.AARecall']")),15000)
->>>>>>> 24a88d71b29bd4cc339bc8170a72dc3d914e2ce3
       .click()
       .then(() => console.log("Recalled!"));
 
