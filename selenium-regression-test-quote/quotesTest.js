@@ -227,9 +227,12 @@ quotesTest = async(quoteId, action) => {
         process.exit(1);
       }
     }
-    else console.log('Invalid action!');
+    else {
+      console.log('Invalid action!');
+      await driver.quit();
+      process.exit(1);
+    } 
     await driver.quit();
-    process.exit(1);
 }
 
 const args = process.argv.slice(2);
