@@ -37,8 +37,8 @@ quotesTest = async(quoteId, action) => {
       }
       catch (e) {
         console.log("Already Submitted!");
-        driver.quit();
-        return;
+        await driver.quit();
+        process.exit(1);
       }
 
       // check status & recordType before submission
@@ -55,8 +55,8 @@ quotesTest = async(quoteId, action) => {
       catch(e) {
         const text = await (await driver.wait(until.elementLocated(By.xpath("//div/span[. = 'Status']/following::lightning-formatted-text")), 10000)).getText();
         console.log("Status checked failed, Status - expected: Draft or empty, value: " + text);
-        driver.quit();
-        return;
+        await driver.quit();
+        process.exit(1);
       }
 
       try {
@@ -72,8 +72,8 @@ quotesTest = async(quoteId, action) => {
       catch (e) {
         const text = await driver.wait(until.elementLocated(By.xpath("//span[@force-recordtype_recordtype='']")), 10000).getText();
         console.log("RecordType checked failed, RecordType - expected: Draft Quote, value: " + text);
-        driver.quit();
-        return;
+        await driver.quit();
+        process.exit(1);
       }
       
       // submit for approval
@@ -89,8 +89,8 @@ quotesTest = async(quoteId, action) => {
       }
       catch (e) {
         console.log("Submission not finish!");
-        driver.quit();
-        return;
+        await driver.quit();
+        process.exit(1);
       }
       
       // check status & recordType after submission
@@ -107,8 +107,8 @@ quotesTest = async(quoteId, action) => {
       catch(e) {
         const text = await (await driver.wait(until.elementLocated(By.xpath("//div/span[. = 'Status']/following::lightning-formatted-text")), 10000)).getText();
         console.log("Status checked failed, Status - expected: Approved, value: " + text);
-        driver.quit();
-        return;
+        await driver.quit();
+        process.exit(1);
       }
 
       try {
@@ -124,8 +124,8 @@ quotesTest = async(quoteId, action) => {
       catch (e) {
         const text = await driver.wait(until.elementLocated(By.xpath("//span[@force-recordtype_recordtype='']")), 10000).getText();
         console.log("RecordType checked failed, RecordType - expected: Approved Quote, value: " + text);
-        driver.quit();
-        return;
+        await driver.quit();
+        process.exit(1);
       }
     }
 
@@ -138,8 +138,8 @@ quotesTest = async(quoteId, action) => {
       }
       catch (e) {
         console.log("Already Recalled!");
-        driver.quit();
-        return;
+        await driver.quit();
+        process.exit(1);
       }
 
       // check status & recordType before recalled
@@ -156,8 +156,8 @@ quotesTest = async(quoteId, action) => {
       catch(e) {
         const text = await (await driver.wait(until.elementLocated(By.xpath("//div/span[. = 'Status']/following::lightning-formatted-text")), 10000)).getText();
         console.log("Status checked failed, Status - expected: Approved, value: " + text);
-        driver.quit();
-        return;
+        await driver.quit();
+        process.exit(1);
       }
 
       try {
@@ -173,8 +173,8 @@ quotesTest = async(quoteId, action) => {
       catch (e) {
         const text = await driver.wait(until.elementLocated(By.xpath("//span[@force-recordtype_recordtype='']")), 10000).getText();
         console.log("RecordType checked failed, RecordType - expected: Approved Quote, value: " + text);
-        driver.quit();
-        return;
+        await driver.quit();
+        process.exit(1);
       }
 
       // click recall button
@@ -188,8 +188,8 @@ quotesTest = async(quoteId, action) => {
       }
       catch (e) {
         console.log("Recall not finish!");
-        driver.quit();
-        return;
+        await driver.quit();
+        process.exit(1);
       }
 
       // check status & recordType after recalled
@@ -206,8 +206,8 @@ quotesTest = async(quoteId, action) => {
       catch(e) {
         const text = await (await driver.wait(until.elementLocated(By.xpath("//div/span[. = 'Status']/following::lightning-formatted-text")), 10000)).getText();
         console.log("Status checked failed, Status - expected: Draft or empty, value: " + text);
-        driver.quit();
-        return;
+        await driver.quit();
+        process.exit(1);
       }
 
       try {
@@ -223,12 +223,13 @@ quotesTest = async(quoteId, action) => {
       catch (e) {
         const text = await driver.wait(until.elementLocated(By.xpath("//span[@force-recordtype_recordtype='']")), 10000).getText();
         console.log("RecordType checked failed, RecordType - expected: Draft Quote, value: " + text);
-        driver.quit();
-        return;
+        await driver.quit();
+        process.exit(1);
       }
     }
     else console.log('Invalid action!');
-    driver.quit();
+    await driver.quit();
+    process.exit(1);
 }
 
 const args = process.argv.slice(2);
