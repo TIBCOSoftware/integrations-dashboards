@@ -296,7 +296,9 @@ const switchAccount = async(quoteId, action, driver, profile) => {
       try {
         console.log('Finding Quote Owner...');
         await driver.sleep(5000);
-        await driver.wait(until.elementLocated(By.xpath("(//span[.='Owner']/following::force-hoverable-link/div/a)[1]/span")), 20000).click();
+        let element = driver.findElement(By.xpath("(//span[.='Owner']/following::force-hoverable-link/div/a)[1]/span"));
+        await driver.actions().click(element).perform();
+        // await driver.wait(until.elementLocated(By.xpath("(//span[.='Owner']/following::force-hoverable-link/div/a)[1]/span")), 20000).click();
         await driver.wait(until.elementLocated(By.xpath("//div[@title='User Detail']")), 20000).click();
       }
       catch(e) {
