@@ -11,7 +11,11 @@
             "skipFiles": [
                 "<node_internals>/**"
             ],
-            "program": "${workspaceFolder}\\quotesTest.js"
+            "runtimeArgs": [ 
+                "${workspaceFolder}\\quote_action_test\\test_run.js",
+                "a0p2g000001ZBOtAAO", 
+                "submit",
+                "Renewals"]
         }
     ]
 }
