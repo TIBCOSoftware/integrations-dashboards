@@ -109,6 +109,7 @@ export const quotesTest = async(quoteId, action, profile, driver) => {
  
       // check current account log out
       await switchAccount(quoteId, 'logout', driver, profile);
+      await driver.sleep(5000);
       
       // check status & recordType after submission
       try {
@@ -294,6 +295,7 @@ const switchAccount = async(quoteId, action, driver, profile) => {
       // find the owner
       try {
         console.log('Finding Quote Owner...');
+        await driver.sleep(5000);
         await driver.wait(until.elementLocated(By.xpath("(//span[.='Owner']/following::force-hoverable-link/div/a)[1]/span")), 20000).click();
         await driver.wait(until.elementLocated(By.xpath("//div[@title='User Detail']")), 20000).click();
       }
