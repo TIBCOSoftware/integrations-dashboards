@@ -21,6 +21,11 @@ let origin_profile = '';
 
  
 export const quotesTest = async(quoteId, action, profile, driver) => {
+
+    // all parameters
+    console.log('Quote Id: ' + quoteId);
+    console.log('Action: ' + action);
+    console.log('Profile: ' + profile);
  
     // open the sandbox
     await driver.get('https://tibcocpq--sandbox.lightning.force.com/lightning/page/home');
