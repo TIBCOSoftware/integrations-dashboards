@@ -279,8 +279,19 @@ const switchAccount = async(quoteId, action, driver, profile) => {
       await driver.sleep(5000);
       await (await driver).get('https://tibcocpq--sandbox.lightning.force.com/lightning/r/SBQQ__Quote__c/'+ quoteId + '/view');
   }
-  await driver.wait(until.elementLocated(By.xpath("(//span[.='Owner']/following::force-hoverable-link/div/a)[1]")), 20000).click();
-  await driver.wait(until.elementLocated(By.xpath("//div[@title='User Detail']")), 20000).click();
+  await driver.sleep(5000);
+  try {
+    console.log('Finding Quote Owner...');
+    await driver.wait(until.elementLocated(By.xpath("(//span[.='Owner']/following::force-hoverable-link/div/a)[1]")), 20000).click();
+    await driver.wait(until.elementLocated(By.xpath("//div[@title='User Detail']")), 20000).click();
+  }
+  catch(e) {
+      // const text = await driver.wait(until.elementLocated(By.xpath("//span[@force-recordtype_recordtype='']")), 10000).getText();
+      console.log("Finding Owner Failed: " + e);
+      await driver.quit();
+      process.exit(1);
+  }
+  
 
   // switch to iframe & eidt
   await driver.sleep(5000);
