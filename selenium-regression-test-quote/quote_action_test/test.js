@@ -260,7 +260,7 @@ export const quotesTest = async(quoteId, action, profile, driver, stage) => {
     await driver.quit();
 }
  
-const switchAccount = async(quoteId, action, driver, profile) => {
+const switchAccount = async(quoteId, action, driver, userId) => {
   let curr_user = '';
   // get current user
   try {
@@ -290,9 +290,9 @@ const switchAccount = async(quoteId, action, driver, profile) => {
       try {
         console.log('Finding Quote Owner...');
         await driver.sleep(5000);
-        let element = driver.findElement(By.xpath("(//span[.='Owner']/following::force-hoverable-link/div/a)[1]/span"));
-        await driver.actions().click(element).perform();
-        const userId = await driver.wait(until.elementLocated(By.xpath("//span[contains(text(), 'User ID')]/following::div[1]/span/span")), 20000).getText();
+        // let element = driver.findElement(By.xpath("(//span[.='Owner']/following::force-hoverable-link/div/a)[1]/span"));
+        // await driver.actions().click(element).perform();
+        // const userId = await driver.wait(until.elementLocated(By.xpath("//span[contains(text(), 'User ID')]/following::div[1]/span/span")), 20000).getText();
         await driver.get('https://tibcocpq--sandbox.lightning.force.com/lightning/setup/ManageUsers/page?address=/'+ userId +'?noredirect=1&isUserEntityOverride=1');
         // await driver.wait(until.elementLocated(By.xpath("(//span[.='Owner']/following::force-hoverable-link/div/a)[1]/span")), 20000).click();
         // await driver.wait(until.elementLocated(By.xpath("//div[@title='User Detail']")), 20000).click();
