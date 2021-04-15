@@ -299,7 +299,9 @@ const switchAccount = async(quoteId, action, driver, profile) => {
         let element = driver.findElement(By.xpath("(//span[.='Owner']/following::force-hoverable-link/div/a)[1]/span"));
         await driver.actions().click(element).perform();
         // await driver.wait(until.elementLocated(By.xpath("(//span[.='Owner']/following::force-hoverable-link/div/a)[1]/span")), 20000).click();
-        await driver.wait(until.elementLocated(By.xpath("//div[@title='User Detail']")), 20000).click();
+        // await driver.wait(until.elementLocated(By.xpath("//div[@title='User Detail']")), 20000).click();
+        const userId = await driver.wait(until.elementLocated(By.xpath("//span[contains(text(), 'User ID')]/following::div[1]/span/span")), 20000).getText();
+        await driver.get('https://tibcocpq--sandbox.lightning.force.com/lightning/setup/ManageUsers/page?address=/'+ userId +'?noredirect=1&isUserEntityOverride=1');
       }
       catch(e) {
           console.log("Finding Owner Failed: " + e);
@@ -348,9 +350,16 @@ const switchAccount = async(quoteId, action, driver, profile) => {
       await (await driver).get('https://tibcocpq--sandbox.lightning.force.com/lightning/r/SBQQ__Quote__c/'+ quoteId + '/view');
       // find the owner
       try {
-        console.log('Finding Quote Owner...');
-        await driver.wait(until.elementLocated(By.xpath("(//span[.='Owner']/following::force-hoverable-link/div/a)[1]/span")), 20000).click();
-        await driver.wait(until.elementLocated(By.xpath("//div[@title='User Detail']")), 20000).click();
+        // console.log('Finding Quote Owner...');
+        // await driver.wait(until.elementLocated(By.xpath("(//span[.='Owner']/following::force-hoverable-link/div/a)[1]/span")), 20000).click();
+        // await driver.wait(until.elementLocated(By.xpath("//div[@title='User Detail']")), 20000).click();
+        await driver.sleep(5000);
+        let element = driver.findElement(By.xpath("(//span[.='Owner']/following::force-hoverable-link/div/a)[1]/span"));
+        await driver.actions().click(element).perform();
+        // await driver.wait(until.elementLocated(By.xpath("(//span[.='Owner']/following::force-hoverable-link/div/a)[1]/span")), 20000).click();
+        // await driver.wait(until.elementLocated(By.xpath("//div[@title='User Detail']")), 20000).click();
+        const userId = await driver.wait(until.elementLocated(By.xpath("//span[contains(text(), 'User ID')]/following::div[1]/span/span")), 20000).getText();
+        await driver.get('https://tibcocpq--sandbox.lightning.force.com/lightning/setup/ManageUsers/page?address=/'+ userId +'?noredirect=1&isUserEntityOverride=1');
       }
       catch(e) {
           console.log("Finding Owner Failed: " + e);
@@ -380,3 +389,5 @@ const switchAccount = async(quoteId, action, driver, profile) => {
   console.log(action + ' completed!');
   await (await driver).sleep(5000);
 }
+
+// https://tibcocpq--sandbox.lightning.force.com/lightning/setup/ManageUsers/page?address=/0051I000006lPqHQAU?noredirect=1&isUserEntityOverride=1
