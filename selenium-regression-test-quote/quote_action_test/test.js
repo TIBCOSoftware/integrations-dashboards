@@ -16,18 +16,12 @@ const password = process.env.PASSWORD;
   // check values
  
  
-let accounts = {
-  owner: '',
-  approver: ''
-};
-export { accounts };
- 
-export const quotesTest = async(quoteId, action, userId, driver, stage) => {
+export const quotesTest = async(quoteId, action, ownerId, driver, stage) => {
  
     // all parameters
-    console.log('Quote Id: ' + quoteId);
+    console.log('Quote ID: ' + quoteId);
     console.log('Action: ' + action);
-    console.log('User ID: ' + userId);
+    console.log('Owner ID: ' + ownerId);
  
     // get quote by url (id)
     await (await driver).get('https://tibcocpq--sandbox.lightning.force.com/lightning/r/SBQQ__Quote__c/'+ quoteId + '/view');
@@ -81,7 +75,7 @@ export const quotesTest = async(quoteId, action, userId, driver, stage) => {
       // }
 
       // log in with the owner account
-      await switchAccount(quoteId, 'login', driver, userId);
+      await switchAccount(quoteId, 'login', driver, ownerId);
 
       // submit for approval
       await driver.wait(until.elementLocated(By.xpath("//button[@name='SBQQ__Quote__c.AASubmit']")), 15000)
@@ -101,7 +95,7 @@ export const quotesTest = async(quoteId, action, userId, driver, stage) => {
       }
  
       // check current account log out
-      await switchAccount(quoteId, 'logout', driver, userId);
+      await switchAccount(quoteId, 'logout', driver, ownerId);
       
       // check status & recordType after submission
       try {
@@ -194,7 +188,7 @@ export const quotesTest = async(quoteId, action, userId, driver, stage) => {
       }
  
       // log in with the owner account
-      await switchAccount(quoteId, 'login', driver, profile);
+      await switchAccount(quoteId, 'login', driver, ownerId);
  
       // click recall button
       await (await driver.wait(until.elementLocated(By.xpath("//button[@name='SBQQ__Quote__c.AARecall']")),10000))
@@ -212,7 +206,7 @@ export const quotesTest = async(quoteId, action, userId, driver, stage) => {
       }
  
       // log out
-      await switchAccount(quoteId, 'logout', driver, profile);
+      await switchAccount(quoteId, 'logout', driver, ownerId);
  
       // check status & recordType after recalled
       try {
@@ -258,7 +252,7 @@ export const quotesTest = async(quoteId, action, userId, driver, stage) => {
     await driver.quit();
 }
  
-const switchAccount = async(quoteId, action, driver, userId) => {
+const switchAccount = async(quoteId, action, driver, ownerId) => {
   let curr_user = '';
   // get current user
   try {
@@ -279,36 +273,63 @@ const switchAccount = async(quoteId, action, driver, userId) => {
   }
   await driver.sleep(2000);
 
+  // find the owner
+  try {
+    await driver.sleep(2000);
+    await driver.get('https://tibcocpq--sandbox.lightning.force.com/lightning/setup/ManageUsers/page?address=/'+ ownerId +'?noredirect=1&isUserEntityOverride=1');
+    // check if current user is the owner user
+    await (await driver).switchTo().defaultContent();
+    const frame2 = await driver.wait(until.elementLocated(By.xpath("//*[@id='setupComponent']/div[2]/div/div/force-aloha-page/div/iframe")));
+    await (await driver).switchTo().frame(frame2);
+    let owner = await driver.wait(until.elementLocated(By.xpath("//td[.='Name']/following::td[1]")), 20000).getText();
+    console.log('Owner: ' + owner);
+  }
+  catch(e) {
+      console.log("Finding Owner Failed: " + e);
+      await driver.quit();
+      process.exit(1);
+  }
+
   if (action === 'login') {
     console.log('Logging in with owner account...')
- 
-    // find the owner
-    try {
-      console.log('Finding Quote Owner...');
-      await driver.sleep(2000);
-      await driver.get('https://tibcocpq--sandbox.lightning.force.com/lightning/setup/ManageUsers/page?address=/'+ userId +'?noredirect=1&isUserEntityOverride=1');
-    }
-    catch(e) {
-        console.log("Finding Owner Failed: " + e);
-        await driver.quit();
-        process.exit(1);
-    }
     await driver.sleep(5000);
-
     // log in
-    await (await driver).sleep(5000);
-    await (await driver).switchTo().defaultContent();
-    const frame3 = await driver.wait(until.elementLocated(By.xpath("//*[@id='setupComponent']/div[2]/div/div/force-aloha-page/div/iframe")));
-    await (await driver).switchTo().frame(frame3);
-    await driver.wait(until.elementLocated(By.xpath("//*[@id='topButtonRow']/input[@name='login']")), 20000).click();
-    await (await driver).sleep(5000);
-    await (await driver).get('https://tibcocpq--sandbox.lightning.force.com/lightning/r/SBQQ__Quote__c/'+ quoteId + '/view');
+    if (owner === curr_user) {
+      console.log('Already logged in!');
+    }
+    else {
+      try {
+        await (await driver).sleep(2000);
+        await (await driver).switchTo().defaultContent();
+        const frame3 = await driver.wait(until.elementLocated(By.xpath("//*[@id='setupComponent']/div[2]/div/div/force-aloha-page/div/iframe")));
+        await (await driver).switchTo().frame(frame3);
+        await driver.wait(until.elementLocated(By.xpath("//*[@id='topButtonRow']/input[@name='login']")), 20000).click();
+        await (await driver).sleep(5000);
+        await (await driver).get('https://tibcocpq--sandbox.lightning.force.com/lightning/r/SBQQ__Quote__c/'+ quoteId + '/view');
+      }
+      catch (e) {
+        console.log('Log in failed!' + e);
+        process.exit(1);
+      }
+    }
   }
   else if (action === 'logout') {
     console.log('Logging out from owner account...');
     // log out
-    await driver.wait(until.elementLocated(By.xpath("(//span[@class='uiImage'])[1]")), 20000).click();
-    await driver.wait(until.elementLocated(By.xpath("//a[@class='profile-link-label logout uiOutputURL']")), 20000).click();
+    if (owner === curr_user) {
+      try {
+        await driver.wait(until.elementLocated(By.xpath("(//span[@class='uiImage'])[1]")), 20000).click();
+        await driver.wait(until.elementLocated(By.xpath("//a[@class='profile-link-label logout uiOutputURL']")), 20000).click();
+      }
+      catch (e) {
+        console.log('Logged out failed!' + e);
+        process.exit(1);
+      }
+    }
+    else {
+      console.log('Already logged out!');
+    }
+    
     await driver.sleep(5000);
     await (await driver).get('https://tibcocpq--sandbox.lightning.force.com/lightning/r/SBQQ__Quote__c/'+ quoteId + '/view');
   }
