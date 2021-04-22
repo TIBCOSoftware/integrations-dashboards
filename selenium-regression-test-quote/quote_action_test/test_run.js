@@ -24,15 +24,16 @@ const initialization = async(driver) => {
 
 
 const args = process.argv.slice(2);
-// (quoteId, action, profile, driver)
+// (quoteId, action, userId, driver)
 const test_run = async() => {
     await initialization(driver);
     await quotesTest(args[0], args[1], args[2], driver);
+    await (await driver).quit();
 }
 
 test_run();
 
 
-// node test_run a0p2g000001ZBOtAAO submit Renewals
+// node test_run a0p2g000001ZD6FAAW submit Renewals
 
 // user id: 0051I000006NbUJQA0
