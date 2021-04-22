@@ -1,35 +1,43 @@
 import pkg from 'selenium-webdriver';
 const {Builder, By, Key, until} = pkg;
-import { quotesTest } from '../quote_action_test/test.js';
+import { quotesTest, switchAccount } from '../quote_action_test/test.js';
 import 'chromedriver';
 import dotenv from 'dotenv';
 dotenv.config();
 
-const account = process.env.ACCOUNT;
-const password = process.env.PASSWORD;
-let origin_profile = '';
+// Outline - quotelineTest
+  // take quoteId, profile, quantity, discount,license_model and driver as parameters
+  // check values in the quote page
+  // login owner account (change profile)
+  // edit lines
+    // add product
+    // change quantity and discount
+    // cancel product
+  // check values --- !!!
+  // submit for approval
+  // log out owner (change profile)
+  // check values
+  // login approver
+  // approve action
+  // logout approver
+  // login owner
+  // check values
 
-export const quotelineTest = async(quoteId, profile, quantity, discount, license_model) => {
+  // shopify
 
-    // Open the sandbox
-    let driver = new Builder()
-        .forBrowser('chrome').build();
 
-    await (await driver).manage().setTimeouts({ implicit:10000 });
-    await driver.get('https://tibcocpq--sandbox.lightning.force.com/lightning/page/home');
+export const quotelineTest = async(quoteId, ownerId, approverId, quantity, discount, license_model, driver) => {
 
-    // Log in with email and password
-    await driver.findElement(By.css('#email')).sendKeys(account);
-    await driver.findElement(By.css('#next')).click();
-    await driver.wait(until.elementLocated(By.css('#password'))).sendKeys(password);
-    await driver.wait(until.elementLocated(By.css('#taLogin'))).click();
+    // all parameters
+    console.log('Quote ID: ' + quoteId);
+    console.log('Owner ID: ' + ownerId);
+    console.log('Approver ID: ' + approverId);
+    console.log('Quanity: ' + quantity);
+    console.log('Discount: ' + discount);
+    console.log('License Model: ' + license_model);
 
     // Get quote by url (id)
     await (await driver).get('https://tibcocpq--sandbox.lightning.force.com/lightning/r/SBQQ__Quote__c/'+ quoteId + '/view');
-
-    // modify and login with the owner account
-    await switchAccount(quoteId, 'login', driver, profile);
-    // driver.quit();
 
     // Check the status of the quote
     try {
@@ -48,11 +56,18 @@ export const quotelineTest = async(quoteId, profile, quantity, discount, license
         driver.quit();
     }
 
-    // Get start date and end date
+    // Get start date, end date Net Amount and Total ACV
     const startDate = await (await driver.wait(until.elementLocated(By.xpath("//div/span[.='Start Date']/following::lightning-formatted-text")), 20000)).getText();
     const endDate = await (await driver.wait(until.elementLocated(By.xpath("//div/span[.='End Date']/following::lightning-formatted-text")), 20000)).getText();
+    const net_amount = await (await driver.wait(until.elementLocated(By.xpath("//*[@id='brandBand_2']/div/div/div[1]/div/one-record-home-flexipage2/forcegenerated-adgrollup_component___forcegenerated__flexipage_recordpage___quote_record_page___sbqq__quote__c___view/forcegenerated-flexipage_quote_record_page_sbqq__quote__c__view_js/record_flexipage-record-page-decorator/div[1]/slot/flexipage-record-home-template-desktop2/div/div[1]/slot/slot/flexipage-component2/slot/records-lwc-highlights-panel/records-lwc-record-layout/forcegenerated-highlightspanel_sbqq__quote__c___0121i000000p2ctqaq___compact___view___recordlayout2/force-highlights2/div[1]/div[2]/slot/slot/force-highlights-details-item[2]/div/p[2]/slot/records-formula-output/slot/lightning-formatted-text")), 20000)).getText();
+    const total_ACV = await (await driver.wait(until.elementLocated(By.xpath("//*[@id='brandBand_2']/div/div/div[1]/div/one-record-home-flexipage2/forcegenerated-adgrollup_component___forcegenerated__flexipage_recordpage___quote_record_page___sbqq__quote__c___view/forcegenerated-flexipage_quote_record_page_sbqq__quote__c__view_js/record_flexipage-record-page-decorator/div[1]/slot/flexipage-record-home-template-desktop2/div/div[1]/slot/slot/flexipage-component2/slot/records-lwc-highlights-panel/records-lwc-record-layout/forcegenerated-highlightspanel_sbqq__quote__c___0121i000000p2ctqaq___compact___view___recordlayout2/force-highlights2/div[1]/div[2]/slot/slot/force-highlights-details-item[3]/div/p[2]/slot/records-formula-output/slot/lightning-formatted-text")), 20000)).getText();
     console.log("start date: " + startDate);
     console.log("end date: " + endDate);
+    console.log("Net Amount: " + net_amount);
+    console.log("Total ACV: " + total_ACV);
+
+    // modify and login with the owner account
+    await switchAccount(quoteId, 'login', driver, ownerId);
 
     // Eidt lines
     try {
@@ -68,8 +83,7 @@ export const quotelineTest = async(quoteId, profile, quantity, discount, license
     }
 
     // Switch iframe
-    // await driver.wait(until.ableToSwitchToFrame(By.xpath("//iframe")), 20000);
-    const frame = await driver.wait(until.elementLocated(By.xpath("//iframe")));
+    const frame = await driver.wait(until.elementLocated(By.xpath("//iframe")),20000);
     await (await driver).switchTo().frame(frame);
 
     // Check add product button
@@ -127,7 +141,7 @@ export const quotelineTest = async(quoteId, profile, quantity, discount, license
     
     // Check select button
     try {
-        await driver.wait(until.elementLocated(By.xpath("//paper-button[@id='plSelect']")), 20000);
+        await driver.wait(until.elementLocated(By.xpath("//paper-button[@id='plSelect']")), 30000);
     }
     catch (e) {
         console.log(e);
@@ -136,7 +150,7 @@ export const quotelineTest = async(quoteId, profile, quantity, discount, license
 
     // Pick up the first product with License Model "Subscription"
     try {
-        await driver.wait(until.elementLocated(By.xpath("(//sb-table-cell[@item='Product2.License_Model__c']/div/sb-field/span/div/span[.='" + license_model + "'])[1]/preceding::div[@id='checkboxContainer'][1]")), 20000).click();
+        await driver.wait(until.elementLocated(By.xpath("(//sb-table-cell[@item='Product2.License_Model__c']/div/sb-field/span/div/span[.='" + license_model + "'])[1]/preceding::div[@id='checkboxContainer'][1]")), 30000).click();
     }
     catch (e) {
         console.log("No product with License Model " + "\"" +license_model + "\"" + "!");
@@ -234,6 +248,20 @@ export const quotelineTest = async(quoteId, profile, quantity, discount, license
         // driver.quit();
     }
 
+    // Find the first renewed line & Change the quantity to 0
+    try {
+        await (await driver.wait(until.elementLocated(By.xpath("(//div[@field='Line_Status__c']/div[.='Renewed'])[1]/following::div[@field='Custom_Quantity__c'][1]")), 20000)).click();
+        await (await driver.wait(until.elementLocated(By.xpath("(//div[@field='Line_Status__c']/div[.='Renewed'])[1]/following::div[@field='Custom_Quantity__c'][1]")), 20000)).click();
+        await driver.wait(until.elementLocated(By.xpath("(//div[@field='Line_Status__c']/div[.='Renewed'])[1]/following::div[@field='Custom_Quantity__c'][1]/div/div/sb-input/input")), 20000)
+            .sendKeys('0')
+            .then(console.log("The first renewed line cancelled!"));
+    }
+    catch(e) {
+        console.log("Cancellation failed!");
+        console.log(e);
+        // driver.quit();
+    }
+
     // Click calculate
     await driver.wait(until.elementLocated(By.xpath("//sb-custom-action/paper-button[text()='Calculate']")), 15000)
         .click()
@@ -281,64 +309,241 @@ export const quotelineTest = async(quoteId, profile, quantity, discount, license
 
     }
 
+    // Validate the red flag
+    try {
+        const src = await (await driver.wait(until.elementLocated(By.xpath("(//div[@field='Approval_Flag__c'])[last()]/div/div/img")), 20000)).getAttribute("src");
+        if (src.includes('comfirm')) console.log("Green Flag!");
+        if (src.includes('error')) console.log("Red Flag!");
+    }
+    catch(e) {
+        console.log(e);
+    }
+
     // Click save
     await driver.wait(until.elementLocated(By.xpath("//sb-custom-action/paper-button[text()='Save']")), 15000)
         .click()
         .then(console.log("Saving..."));
 
+    // Continue if alert
+    // try {
+    //     await (await driver.wait(until.elementLocated(By.xpath("//paper-button[@id='continue']")), 15000)).click()
+    // }
+    // catch(e) {
+    // }
+
     // Wait for data update
     await (await driver).sleep(10000);
 
-    // Validate Quote Lines (Line Status & Product Name)
-    await (await driver).get('https://tibcocpq--sandbox.lightning.force.com/lightning/r/' + quoteId +'/related/SBQQ__LineItems__r/view')
-        .then(console.log("Opening Quote Lines"));
+    {// --- !!!
+    // Validate Net Amount and Total ACV
+    // try {
+    //     await (await driver.wait(until.elementLocated(By.xpath("//*[@id='brandBand_2']/div/div/div[1]/div/one-record-home-flexipage2/forcegenerated-adgrollup_component___forcegenerated__flexipage_recordpage___quote_record_page___sbqq__quote__c___view/forcegenerated-flexipage_quote_record_page_sbqq__quote__c__view_js/record_flexipage-record-page-decorator/div[1]/slot/flexipage-record-home-template-desktop2/div/div[1]/slot/slot/flexipage-component2/slot/records-lwc-highlights-panel/records-lwc-record-layout/forcegenerated-highlightspanel_sbqq__quote__c___0121i000000p2ctqaq___compact___view___recordlayout2/force-highlights2/div[1]/div[2]/slot/slot/force-highlights-details-item[2]/div/p[2]/slot/records-formula-output/slot/lightning-formatted-text")), 20000))
+    //         .getText()
+    //         .then(text => {
+    //             const net_amount_num = net_amount.split(" ")[1].split(",");
+    //             const total_ACV_num = total_ACV.split(" ")[1].split(",");
+    //             let net_amount_before = '';
+    //             let total_ACV_before = '';
+    //             net_amount_num.forEach(num => net_amount_before += num);
+    //             total_ACV_num.forEach(num => total_ACV_before += num);
+    //         });
+    //     const total_ACV = await (await driver.wait(until.elementLocated(By.xpath("//*[@id='brandBand_2']/div/div/div[1]/div/one-record-home-flexipage2/forcegenerated-adgrollup_component___forcegenerated__flexipage_recordpage___quote_record_page___sbqq__quote__c___view/forcegenerated-flexipage_quote_record_page_sbqq__quote__c__view_js/record_flexipage-record-page-decorator/div[1]/slot/flexipage-record-home-template-desktop2/div/div[1]/slot/slot/flexipage-component2/slot/records-lwc-highlights-panel/records-lwc-record-layout/forcegenerated-highlightspanel_sbqq__quote__c___0121i000000p2ctqaq___compact___view___recordlayout2/force-highlights2/div[1]/div[2]/slot/slot/force-highlights-details-item[3]/div/p[2]/slot/records-formula-output/slot/lightning-formatted-text")), 20000)).getText();
+    
+    //     await (await driver.wait(until.elementLocated(By.xpath("(//div[@field='Net_Total_Bundle__c'])[" + index + "]/div")), 20000))
+    //         .getText()
+    //         .then((text) => {
+    //             const nums_before = net_total.split(" ")[1].split(",");
+    //             const nums_after = text.split(" ")[1].split(",");
+    //             let net_total_before = '';
+    //             let net_total_after = '';
+    //             nums_before.forEach(num => net_total_before += num)
+    //             nums_after.forEach(num => net_total_after += num)
+    //             let total1 = (((100-discount)/100 * net_total_before) * quantity).toFixed(2);
+    //             let total2 = parseFloat(net_total_after).toFixed(2);
+    //             console.log(total1);
+    //             console.log(total2);
+    //             if (Math.abs(total1 - total2) < 1) {
+    //                 console.log("Net total checked after calculation!");
+    //                 console.log("Net total - Before: USD " + net_total_before);
+    //                 console.log("Net total - After: USD " + net_total_after);
+    //             }
+    //             else throw new Error('Net total does not match!');
+    //         });
+    // }
+    // catch(e) {
+    //     const text = await (await driver.wait(until.elementLocated(By.xpath("(//div[@field='Net_Total_Bundle__c'])[" + index + "]/div")), 20000)).getText();
+    //     const nums_before = net_total.split(" ")[1].split(",");
+    //     const nums_after = text.split(" ")[1].split(",");
+    //     let net_total_before = '';
+    //     let net_total_after = '';
+    //     nums_before.forEach(num => net_total_before += num)
+    //     nums_after.forEach(num => net_total_after += num)
+    //     let total1 = (((100-discount)/100 * net_total_before).toFixed(2) * quantity).toFixed(2);
+    //     let total2 = parseFloat(net_total_after).toFixed(2);
+    //     console.log("Net total check failed after calculation, Net Total - expected: USD " + total1 + ", value: USD " + total2);
+    //     driver.quit();
+    // }
+    }
 
+    // submit for approval
+    await quotesTest(quoteId, 'submit', ownerId, driver);
+
+    // login approver
+    await switchAccount(quoteId, 'login', driver, approverId);
+
+    // scroll down
+    let Element = await driver.findElement(By.xpath("//div/span[. = 'Status']/following::lightning-formatted-text"));
+    driver.executeScript("arguments[0].scrollIntoView();", Element);
+    await driver.sleep(5000);
+
+    // Approve this quote
     try {
+        await (await driver.wait(until.elementLocated(By.xpath("//*[@id='brandBand_2']/div/div/div/div/one-record-home-flexipage2/forcegenerated-adgrollup_component___forcegenerated__flexipage_recordpage___quote_record_page___sbqq__quote__c___view/forcegenerated-flexipage_quote_record_page_sbqq__quote__c__view_js/record_flexipage-record-page-decorator/div[1]/slot/flexipage-record-home-template-desktop2/div/div[2]/div[2]/slot/slot/flexipage-component2/slot/lst-related-list-container/div/div[6]/lst-related-list-single-container/laf-progressive-container/slot/lst-related-list-single-app-builder-mapper/article/lst-related-list-view-manager/lst-common-list/lst-list-view-manager-header/div/div[1]/div[1]/div/div/h2/a/span[1]")), 20000)).click();
         await (await driver).sleep(5000);
-        await (await driver.wait(until.elementLocated(By.xpath("(//tr)[last()-1]/td[2]/span/span")), 20000))
-            .getText()
-            .then((text) => {
-                if (text === 'New') {
-                    console.log("Line Status checked!");
-                }
-                else throw new Error('Line Status does not match!');
-            });
+        await (await driver.wait(until.elementLocated(By.xpath("(//tr/td[5][.='Requested'])[1]/preceding::th[1]/span/span/a[1]")), 20000)).click();
+        await (await driver).sleep(2000);
+        // await (await driver.wait(until.elementLocated(By.xpath("//lightning-button/button[.='Approve']")), 20000)).click();
+        // await (await driver).sleep(2000);
+        // await (await driver.wait(until.elementLocated(By.xpath("//textarea")), 20000)).sendKeys("Approved");
+        // await (await driver).sleep(2000);
+        await (await driver).switchTo().defaultContent();
+        const frame_approve = await driver.wait(until.elementLocated(By.xpath("//iframe")));
+        await (await driver).switchTo().frame(frame_approve);
+        await (await driver.wait(until.elementLocated(By.xpath("//input[@value='Approve']")), 20000)).click();
+        console.log('Quote approved!')
     }
-    catch(e) {
-        const text = await (await driver.wait(until.elementLocated(By.xpath("(//tr)[last()-1]/td[2]/span/span")), 20000)).getText();
-        console.log("Line Status check failed, Line Status - expected: " + "New" + ", value: " + text);
-        driver.quit();
+    catch (e) {
+        console.log('Approve quote failed!' + e);
+        process.exit(1);
     }
-
-    try {
-        await (await driver.wait(until.elementLocated(By.xpath("(//tr)[last()-1]/td[3]/span/span")), 20000))
-        .getText()
-        .then((text) => {
-            const v1 = text.split(' - ');
-            const v2 = v1[0].replace('™', '');
-            const v3 = name.replace('™', '');
-            const v4 = name.replace('™', ' ');
-            if (v2 === v3 || v2 === v4) {
-              console.log("Product Name checked!");
-            }
-            else throw new Error('Product Name does not match!');
-        });
-    }
-    catch(e) {
-        const text = await (await driver.wait(until.elementLocated(By.xpath("(//tr)[last()-1]/td[3]/span/span")), 20000)).getText();
-        console.log("Product Name check failed, Product Name - expected: " + name + ", value: " + text);
-        driver.quit();
-    }
-    console.log('Product is added to Quote Lines!');
-
-    // logout and modify the owner account
-    await (await driver).get('https://tibcocpq--sandbox.lightning.force.com/lightning/r/SBQQ__Quote__c/'+ quoteId + '/view');
     await (await driver).sleep(5000);
-    await switchAccount(quoteId, 'logout', driver);
 
-    // // submit for approval ???
-    // await (await driver).get('https://tibcocpq--sandbox.lightning.force.com/lightning/r/SBQQ__Quote__c/'+ quoteId + '/view');
-    // // await quoteTest(quoteId, submit)
+    // log out approver
+    await (await driver).get('https://tibcocpq--sandbox.lightning.force.com/lightning/r/SBQQ__Quote__c/'+ quoteId + '/view')
+    await switchAccount(quoteId, 'logout', driver, approverId);
+
+    // log in owner
+    await (await driver).get('https://tibcocpq--sandbox.lightning.force.com/lightning/r/SBQQ__Quote__c/'+ quoteId + '/view')
+    await switchToOwner(quoteId, 'login', driver, ownerId);
+
+    // navigate to opp
+    try {
+        await driver.wait(until.elementLocated(By.xpath("//span[.='Opportunity']/following::a[1]")), 15000).click();
+    }
+    catch(e) {
+        console.log('Navigate to opp failed!' + e);
+    }
+
+    // scroll down
+    let key_fields = await driver.findElement(By.xpath("//*[.='Key Fields']"));
+    driver.executeScript("arguments[0].scrollIntoView();", key_fields);
+    await driver.sleep(2000);
+
+    // set stage to sales complete
+    try {
+        let edit_stage = await driver.wait(until.elementLocated(By.xpath("(//span[.='Stage'])[last()]/following::button[2]/span")), 15000);
+        await driver.sleep(2000);
+        await driver.actions().click(edit_stage).perform();
+        await driver.sleep(2000);
+
+        // await driver.wait(until.elementLocated(By.xpath("(//span[.='Stage'])[last()]/following::button[2]")), 15000).click();
+        let stage = driver.wait(until.elementLocated(By.xpath("(//label[contains(text(), 'Stage')])[1]/following::input[1]")), 15000);
+        await driver.actions().click(stage).perform();
+        await driver.sleep(2000);
+
+        let salesComplete = driver.wait(until.elementLocated(By.xpath("//lightning-base-combobox-item[@data-value='Sales Complete']")), 15000);
+        await driver.actions().click(salesComplete).perform();
+        await driver.sleep(2000);
+
+        let save = await driver.wait(until.elementLocated(By.xpath("//button[@name='SaveEdit']")), 15000);
+        await driver.actions().click(save).perform();
+        await driver.sleep(2000);
+
+        let cancel = await driver.wait(until.elementLocated(By.xpath("//button[@name='CancelEdit']")), 15000);
+        await driver.actions().click(cancel).perform();
+        await driver.sleep(2000);
+    }
+    catch(e) {
+        console.log('Set stage failed!' + e);
+    }
+
+    // log in as operations
+
+    // scroll down
+    let decommission_details = await driver.findElement(By.xpath("//span[.='Decommission Details']"));
+    driver.executeScript("arguments[0].scrollIntoView();", decommission_details);
+    await driver.sleep(2000);
+
+    // check the finance checklist complete
+    try {
+        let edit_fcc = await driver.wait(until.elementLocated(By.xpath("(//span[.='Finance Checklist Complete'])[last()]/following::button[1]/span[1]")), 15000);
+        await driver.sleep(2000);
+        await driver.actions().click(edit_fcc).perform();
+        await driver.sleep(2000);
+
+        let finance_checkbox = driver.wait(until.elementLocated(By.xpath("//input[@name='Finance_Checklist_Complete__c']")), 15000);
+        await driver.actions().click(finance_checkbox).perform();
+        await driver.sleep(2000);
+
+        let save = await driver.wait(until.elementLocated(By.xpath("//button[@name='SaveEdit']")), 15000);
+        await driver.actions().click(save).perform();
+    }
+    catch(e) {
+        console.log('Check finance checklist complete failed!' + e);
+    }
+
+
+
+
+    // // Validate Quote Lines (Line Status & Product Name)
+    // await (await driver).get('https://tibcocpq--sandbox.lightning.force.com/lightning/r/' + quoteId +'/related/SBQQ__LineItems__r/view')
+    //     .then(console.log("Opening Quote Lines"));
+
+    // try {
+    //     await (await driver).sleep(5000);
+    //     await (await driver.wait(until.elementLocated(By.xpath("(//tr)[last()-1]/td[2]/span/span")), 20000))
+    //         .getText()
+    //         .then((text) => {
+    //             if (text === 'New') {
+    //                 console.log("Line Status checked!");
+    //             }
+    //             else throw new Error('Line Status does not match!');
+    //         });
+    // }
+    // catch(e) {
+    //     const text = await (await driver.wait(until.elementLocated(By.xpath("(//tr)[last()-1]/td[2]/span/span")), 20000)).getText();
+    //     console.log("Line Status check failed, Line Status - expected: " + "New" + ", value: " + text);
+    //     driver.quit();
+    // }
+
+    // try {
+    //     await (await driver.wait(until.elementLocated(By.xpath("(//tr)[last()-1]/td[3]/span/span")), 20000))
+    //     .getText()
+    //     .then((text) => {
+    //         const v1 = text.split(' - ');
+    //         const v2 = v1[0].replace('™', '');
+    //         const v3 = name.replace('™', '');
+    //         const v4 = name.replace('™', ' ');
+    //         if (v2 === v3 || v2 === v4) {
+    //           console.log("Product Name checked!");
+    //         }
+    //         else throw new Error('Product Name does not match!');
+    //     });
+    // }
+    // catch(e) {
+    //     const text = await (await driver.wait(until.elementLocated(By.xpath("(//tr)[last()-1]/td[3]/span/span")), 20000)).getText();
+    //     console.log("Product Name check failed, Product Name - expected: " + name + ", value: " + text);
+    //     driver.quit();
+    // }
+    // console.log('Product is added to Quote Lines!');
+
+    // each quote lines - three values!!!
+    // await checkEachLine();
+
+
+    
+
+    
 
     // // check more values
     //     // quote page - Marketplace Integration Stage, Marketplace Integration - Last Updated, Shopify URL
@@ -359,71 +564,69 @@ export const quotelineTest = async(quoteId, profile, quantity, discount, license
     //         await driver.quit();
     //         process.exit(1);
     //       }
-    //     // each quote lines - three values
+
+    
+
+    // check status and recordType
+    // try {
+    //     await (await driver.wait(until.elementLocated(By.xpath("//div/span[. = 'Status']/following::lightning-formatted-text")), 10000))
+    //       .getText()
+    //       .then((text) => {
+    //           if (text === 'Approved') {
+    //               console.log("Status checked - Approved!");
+    //           }
+    //           else throw new Error('Status not approved!');
+    //     });
+    // }
+    // catch(e) {
+    //       const text = await (await driver.wait(until.elementLocated(By.xpath("//div/span[. = 'Status']/following::lightning-formatted-text")), 10000)).getText();
+    //       console.log("Status checked failed, Status - expected: Approved, value: " + text);
+    //       await driver.quit();
+    //       process.exit(1);
+    // }
+      
+    // try {
+    //     await driver.wait(until.elementLocated(By.xpath("//span[@force-recordtype_recordtype='']")), 10000)
+    //       .getText()
+    //       .then(text => {
+    //           if (text === 'Approved Quote') {
+    //           console.log("Record Type - Approved!");
+    //           }
+    //           else throw new Error('Record Type not approved!');
+    //       });
+    // }
+    // catch (e) {
+    //       const text = await driver.wait(until.elementLocated(By.xpath("//span[@force-recordtype_recordtype='']")), 10000).getText();
+    //       console.log("RecordType checked failed, RecordType - expected: Approved Quote, value: " + text);
+    //       await driver.quit();
+    //       process.exit(1);
+    // }
+
+    // each quote lines - three values!!!
+    // await checkEachLine();
+
+
 
     // driver.quit();
 }
 
-const switchAccount = async(quoteId, action, driver, profile) => {
-    if (action === 'login') {
-        console.log('Logging in with owner account...')
-    }
-    else if (action === 'logout') {
-        console.log('Logging out from owner account...');
-        await driver.wait(until.elementLocated(By.xpath("(//span[@class='uiImage'])[1]")), 20000).click();
-        await driver.wait(until.elementLocated(By.xpath("//a[@class='profile-link-label logout uiOutputURL']")), 20000).click();
-        await driver.sleep(5000);
-        await (await driver).get('https://tibcocpq--sandbox.lightning.force.com/lightning/r/SBQQ__Quote__c/'+ quoteId + '/view');
-    }
-    await driver.wait(until.elementLocated(By.xpath("(//span[.='Owner']/following::force-hoverable-link/div/a)[1]")), 20000).click();
-    await driver.wait(until.elementLocated(By.xpath("//div[@title='User Detail']")), 20000).click();
 
-    // switch to iframe & eidt
-    await driver.sleep(5000);
-    await (await driver).switchTo().defaultContent();
-    const frame1 = await driver.wait(until.elementLocated(By.xpath("//*[@id='setupComponent']/div[2]/div/div/force-aloha-page/div/iframe")));
-    await (await driver).switchTo().frame(frame1);
-    await driver.wait(until.elementLocated(By.xpath("//*[@id='topButtonRow']/input[@name='edit']")), 20000).click();
-    // sleep
-    await (await driver).sleep(5000);
-    //switch to iframe & modify profile
-    await (await driver).switchTo().defaultContent();
-    const frame2 = await driver.wait(until.elementLocated(By.xpath("//*[@id='setupComponent']/div[2]/div/div/force-aloha-page/div/iframe")));
-    await (await driver).switchTo().frame(frame2);
-    if (action === 'login') {
-        // get the origin profile ???
+const checkEachLine = async(quoteId) => {
+    await driver.get("https://tibcocpq--sandbox.lightning.force.com/lightning/r/" + quoteId + "/related/SBQQ__LineItems__r/view")
 
-
-        // await driver.wait(until.elementLocated(By.xpath("//*[@id='Profile']")), 20000).sendKeys(profile);
-        await driver.wait(until.elementLocated(By.xpath("//*[@id='Profile']")), 20000).sendKeys('Renewals');
-    }
-    else if (action === 'logout') {
-        // ???
-        await driver.wait(until.elementLocated(By.xpath("//*[@id='Profile']")), 20000).sendKeys('System Administrator');
-        // await driver.wait(until.elementLocated(By.xpath("//*[@id='Profile']")), 20000).sendKeys(origin_profile);
-    }
-
-    // save
-    await driver.wait(until.elementLocated(By.xpath("//*[@id='topButtonRow']/input[@name='save']")), 20000).click();
-    //switch to iframe & login
-    if (action === 'login') {
-        await (await driver).sleep(5000);
-        await (await driver).switchTo().defaultContent();
-        const frame3 = await driver.wait(until.elementLocated(By.xpath("//*[@id='setupComponent']/div[2]/div/div/force-aloha-page/div/iframe")));
-        await (await driver).switchTo().frame(frame3);
-        await driver.wait(until.elementLocated(By.xpath("//*[@id='topButtonRow']/input[@name='login']")), 20000).click();
-        await (await driver).sleep(5000);
-        await (await driver).get('https://tibcocpq--sandbox.lightning.force.com/lightning/r/SBQQ__Quote__c/'+ quoteId + '/view');
-    }
-    console.log(action + 'completed!');
 }
-
-
-// parameter - Renewals, ...
-
-
 
 
 // node QLE_Test a0p2g000001ZBh8AAG 2 20 Subscription
 // node QLE_Test a0p2g000001ZBXrAAO 2 20 Perpetual License
 // node QLE_Test a0p2g000001ZBXrAAO 2 20 Maintenance
+// a0p1I0000097Y3lQAE
+
+// https://tibcocpq--sandbox.lightning.force.com/lightning/r/SBQQ__Quote__c/a0p2g000001ZCetAAG/view
+// 154575
+
+// https://tibcocpq--sandbox.lightning.force.com/lightning/r/SBQQ__Quote__c/a0p1I0000097Y3lQAE/view
+// 143452
+
+// How to calculate Total ACV
+// Cannot edit lines with other accounts

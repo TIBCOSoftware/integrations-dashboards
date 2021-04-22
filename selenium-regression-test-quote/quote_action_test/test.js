@@ -73,11 +73,12 @@ export const quotesTest = async(quoteId, action, ownerId, driver, stage) => {
       //   await driver.quit();
       //   process.exit(1);
       // }
-
+ 
       // log in with the owner account
       await switchAccount(quoteId, 'login', driver, ownerId);
-
+ 
       // submit for approval
+      await driver.sleep(2000);
       await driver.wait(until.elementLocated(By.xpath("//button[@name='SBQQ__Quote__c.AASubmit']")), 15000)
         .click()
         .then(() => {
@@ -248,11 +249,10 @@ export const quotesTest = async(quoteId, action, ownerId, driver, stage) => {
       await driver.quit();
       process.exit(1);
     } 
- 
-    await driver.quit();
+    // await driver.quit();
 }
  
-const switchAccount = async(quoteId, action, driver, ownerId) => {
+export const switchAccount = async(quoteId, action, driver, userId) => {
   let curr_user = '';
   let owner = '';
   // get current user
@@ -273,11 +273,11 @@ const switchAccount = async(quoteId, action, driver, ownerId) => {
     console.log(e);
   }
   await driver.sleep(2000);
-
+ 
   // find the owner
   try {
     await driver.sleep(2000);
-    await driver.get('https://tibcocpq--sandbox.lightning.force.com/lightning/setup/ManageUsers/page?address=/'+ ownerId +'?noredirect=1&isUserEntityOverride=1');
+    await driver.get('https://tibcocpq--sandbox.lightning.force.com/lightning/setup/ManageUsers/page?address=/'+ userId +'?noredirect=1&isUserEntityOverride=1');
     // check if current user is the owner user
     await (await driver).switchTo().defaultContent();
     const frame2 = await driver.wait(until.elementLocated(By.xpath("//*[@id='setupComponent']/div[2]/div/div/force-aloha-page/div/iframe")));
@@ -290,13 +290,14 @@ const switchAccount = async(quoteId, action, driver, ownerId) => {
       await driver.quit();
       process.exit(1);
   }
-
+ 
   if (action === 'login') {
     console.log('Logging in with owner account...')
     await driver.sleep(5000);
     // log in
     if (owner === curr_user) {
       console.log('Already logged in!');
+      await (await driver).get('https://tibcocpq--sandbox.lightning.force.com/lightning/r/SBQQ__Quote__c/'+ quoteId + '/view');
     }
     else {
       try {
