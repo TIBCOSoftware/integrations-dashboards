@@ -43,4 +43,11 @@ const test_run = async() => {
 
 test_run();
 
-// node test_run a0p2g000001ZD6FAAW 0051I000006lPqHQAU 0051I000001yEr7QAE 2 30 Subscription
+// node test_run a0p2g000001ZERpAAO 0051I000006NbUJQA0 0051I000001yEr7QAE 2 30 Subscription
+
+
+// add new product (Statistica Server)
+// checkout after agreeing the terms
+// change email to ruikang@tibco.com
+// change state to 
+// change zip code to 
