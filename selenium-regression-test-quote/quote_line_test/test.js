@@ -70,6 +70,7 @@ export const quotelineTest = async(quoteId, ownerId, approverId, quantity, disco
     await switchAccount(quoteId, 'login', driver, ownerId);
 
     // Eidt lines
+    await driver.sleep(2000);
     try {
         await driver.wait(until.elementLocated(By.xpath("//runtime_platform_actions-action-renderer[@apiname='Edit_Lines']")), 20000)
             .click()
@@ -332,7 +333,7 @@ export const quotelineTest = async(quoteId, ownerId, approverId, quantity, disco
     // }
 
     // Wait for data update
-    await (await driver).sleep(10000);
+    await (await driver).sleep(5000);
 
     {// --- !!!
     // Validate Net Amount and Total ACV
@@ -393,14 +394,18 @@ export const quotelineTest = async(quoteId, ownerId, approverId, quantity, disco
 
     // scroll down
     let Element = await driver.findElement(By.xpath("//div/span[. = 'Status']/following::lightning-formatted-text"));
-    driver.executeScript("arguments[0].scrollIntoView();", Element);
+    await driver.executeScript("arguments[0].scrollIntoView();", Element);
     await driver.sleep(5000);
 
     // Approve this quote
     try {
-        await (await driver.wait(until.elementLocated(By.xpath("//*[@id='brandBand_2']/div/div/div/div/one-record-home-flexipage2/forcegenerated-adgrollup_component___forcegenerated__flexipage_recordpage___quote_record_page___sbqq__quote__c___view/forcegenerated-flexipage_quote_record_page_sbqq__quote__c__view_js/record_flexipage-record-page-decorator/div[1]/slot/flexipage-record-home-template-desktop2/div/div[2]/div[2]/slot/slot/flexipage-component2/slot/lst-related-list-container/div/div[6]/lst-related-list-single-container/laf-progressive-container/slot/lst-related-list-single-app-builder-mapper/article/lst-related-list-view-manager/lst-common-list/lst-list-view-manager-header/div/div[1]/div[1]/div/div/h2/a/span[1]")), 20000)).click();
-        await (await driver).sleep(5000);
-        await (await driver.wait(until.elementLocated(By.xpath("(//tr/td[5][.='Requested'])[1]/preceding::th[1]/span/span/a[1]")), 20000)).click();
+        let approvals = await driver.wait(until.elementLocated(By.xpath("//span[@title='Approvals']")), 20000);
+        await (await driver).sleep(2000);
+        await driver.actions().click(approvals).perform();
+        await (await driver).sleep(2000);
+        let approve = await driver.wait(until.elementLocated(By.xpath("(//tr/td[5][.='Requested'])[1]/preceding::th[1]/span/span/a[1]")), 20000);
+        await (await driver).sleep(2000);
+        await driver.actions().click(approve).perform();
         await (await driver).sleep(2000);
         // await (await driver.wait(until.elementLocated(By.xpath("//lightning-button/button[.='Approve']")), 20000)).click();
         // await (await driver).sleep(2000);
@@ -409,7 +414,9 @@ export const quotelineTest = async(quoteId, ownerId, approverId, quantity, disco
         await (await driver).switchTo().defaultContent();
         const frame_approve = await driver.wait(until.elementLocated(By.xpath("//iframe")));
         await (await driver).switchTo().frame(frame_approve);
-        await (await driver.wait(until.elementLocated(By.xpath("//input[@value='Approve']")), 20000)).click();
+        let final_approve = await driver.wait(until.elementLocated(By.xpath("//input[@value='Approve']")), 20000);
+        await (await driver).sleep(2000);
+        await driver.actions().click(final_approve).perform();
         console.log('Quote approved!')
     }
     catch (e) {
@@ -419,16 +426,58 @@ export const quotelineTest = async(quoteId, ownerId, approverId, quantity, disco
     await (await driver).sleep(5000);
 
     // log out approver
-    await (await driver).get('https://tibcocpq--sandbox.lightning.force.com/lightning/r/SBQQ__Quote__c/'+ quoteId + '/view')
+    await (await driver).get('https://tibcocpq--sandbox.lightning.force.com/lightning/r/SBQQ__Quote__c/'+ quoteId + '/view');
+    await driver.sleep(2000);
     await switchAccount(quoteId, 'logout', driver, approverId);
 
-    // log in owner
-    await (await driver).get('https://tibcocpq--sandbox.lightning.force.com/lightning/r/SBQQ__Quote__c/'+ quoteId + '/view')
-    await switchToOwner(quoteId, 'login', driver, ownerId);
+
+    // wait for shopifyURL to be populated
+    // go to shopifyURL
+    // add new product (Statistica Server)
+    // checkout after agreeing the terms
+    // change email to ruikang@tibco.com
+    // continue to checkout
+
+
+
+
+    // // log in owner
+    // await (await driver).get('https://tibcocpq--sandbox.lightning.force.com/lightning/r/SBQQ__Quote__c/'+ quoteId + '/view');
+    // await driver.sleep(2000);
+    // await switchAccount(quoteId, 'login', driver, ownerId);
+
+
+    // scroll down
+    let approvals_sd = await driver.findElement(By.xpath("(//span[.='Approvals'])[1]"));
+    driver.executeScript("arguments[0].scrollIntoView();", approvals_sd);
+    // populate the payment type
+    try {
+        let edit_paymentType = await driver.wait(until.elementLocated(By.xpath("(//span[.='Payment Type'])[last()]/following::button[1]/span[1]")), 15000);
+        await driver.sleep(2000);
+        await driver.actions().click(edit_paymentType).perform();
+        await driver.sleep(2000);
+
+        let payment_type = driver.wait(until.elementLocated(By.xpath("//label[.='Payment Type']/following::input[1]")), 15000);
+        await driver.actions().click(payment_type).perform();
+        await driver.sleep(2000);
+
+        let credit_card = driver.wait(until.elementLocated(By.xpath("//lightning-base-combobox-item[.='Credit Card']")), 15000);
+        await driver.actions().click(credit_card).perform();
+        await driver.sleep(2000);
+
+        let save = await driver.wait(until.elementLocated(By.xpath("//button[@name='SaveEdit']")), 15000);
+        await driver.actions().click(save).perform();
+        await driver.sleep(2000);
+        console.log('Payment type populated!')
+    }
+    catch (e) {
+        console.log('Population of payment type failed!');
+    }
 
     // navigate to opp
     try {
-        await driver.wait(until.elementLocated(By.xpath("//span[.='Opportunity']/following::a[1]")), 15000).click();
+        let navigate_to_opp = await driver.wait(until.elementLocated(By.xpath("//span[.='Opportunity']/following::a[1]")), 15000);
+        await driver.actions().click(navigate_to_opp).perform();
     }
     catch(e) {
         console.log('Navigate to opp failed!' + e);
@@ -446,7 +495,6 @@ export const quotelineTest = async(quoteId, ownerId, approverId, quantity, disco
         await driver.actions().click(edit_stage).perform();
         await driver.sleep(2000);
 
-        // await driver.wait(until.elementLocated(By.xpath("(//span[.='Stage'])[last()]/following::button[2]")), 15000).click();
         let stage = driver.wait(until.elementLocated(By.xpath("(//label[contains(text(), 'Stage')])[1]/following::input[1]")), 15000);
         await driver.actions().click(stage).perform();
         await driver.sleep(2000);
@@ -462,6 +510,8 @@ export const quotelineTest = async(quoteId, ownerId, approverId, quantity, disco
         let cancel = await driver.wait(until.elementLocated(By.xpath("//button[@name='CancelEdit']")), 15000);
         await driver.actions().click(cancel).perform();
         await driver.sleep(2000);
+
+        console.log('Set stage complete!');
     }
     catch(e) {
         console.log('Set stage failed!' + e);
@@ -470,7 +520,7 @@ export const quotelineTest = async(quoteId, ownerId, approverId, quantity, disco
     // log in as operations
 
     // scroll down
-    let decommission_details = await driver.findElement(By.xpath("//span[.='Decommission Details']"));
+    let decommission_details = await driver.findElement(By.xpath("//span[.='Secondary Decommission Reason']"));
     driver.executeScript("arguments[0].scrollIntoView();", decommission_details);
     await driver.sleep(2000);
 
@@ -615,18 +665,3 @@ const checkEachLine = async(quoteId) => {
     await driver.get("https://tibcocpq--sandbox.lightning.force.com/lightning/r/" + quoteId + "/related/SBQQ__LineItems__r/view")
 
 }
-
-
-// node QLE_Test a0p2g000001ZBh8AAG 2 20 Subscription
-// node QLE_Test a0p2g000001ZBXrAAO 2 20 Perpetual License
-// node QLE_Test a0p2g000001ZBXrAAO 2 20 Maintenance
-// a0p1I0000097Y3lQAE
-
-// https://tibcocpq--sandbox.lightning.force.com/lightning/r/SBQQ__Quote__c/a0p2g000001ZCetAAG/view
-// 154575
-
-// https://tibcocpq--sandbox.lightning.force.com/lightning/r/SBQQ__Quote__c/a0p1I0000097Y3lQAE/view
-// 143452
-
-// How to calculate Total ACV
-// Cannot edit lines with other accounts
