@@ -1,6 +1,7 @@
 import pkg from 'selenium-webdriver';
 const {Builder, By, Key, until} = pkg;
 import { quotesTest, switchAccount } from '../quote_action_test/test.js';
+import { checkout } from '../helper_test/checkout';
 import 'chromedriver';
 import dotenv from 'dotenv';
 dotenv.config();
@@ -24,8 +25,6 @@ dotenv.config();
   // check values
 
   // shopify
-
-
 export const quotelineTest = async(quoteId, ownerId, approverId, quantity, discount, license_model, driver) => {
 
     // all parameters
@@ -39,7 +38,7 @@ export const quotelineTest = async(quoteId, ownerId, approverId, quantity, disco
     // Get quote by url (id)
     await (await driver).get('https://tibcocpq--sandbox.lightning.force.com/lightning/r/SBQQ__Quote__c/'+ quoteId + '/view');
 
-    // Check the status of the quote
+    // // Check the status of the quote
     try {
         await (await driver.wait(until.elementLocated(By.xpath("//div/span[. = 'Status']/following::lightning-formatted-text")), 20000))
         .getText()
@@ -430,16 +429,8 @@ export const quotelineTest = async(quoteId, ownerId, approverId, quantity, disco
     await driver.sleep(2000);
     await switchAccount(quoteId, 'logout', driver, approverId);
 
-
-    // wait for shopifyURL to be populated
-    // go to shopifyURL
-    // add new product (Statistica Server)
-    // checkout after agreeing the terms
-    // change email to ruikang@tibco.com
-    // continue to checkout
-
-
-
+    // checkout shopify url
+    await checkout(quoteId, driver);
 
     // // log in owner
     // await (await driver).get('https://tibcocpq--sandbox.lightning.force.com/lightning/r/SBQQ__Quote__c/'+ quoteId + '/view');
@@ -449,7 +440,7 @@ export const quotelineTest = async(quoteId, ownerId, approverId, quantity, disco
 
     // scroll down
     let approvals_sd = await driver.findElement(By.xpath("(//span[.='Approvals'])[1]"));
-    driver.executeScript("arguments[0].scrollIntoView();", approvals_sd);
+    await driver.executeScript("arguments[0].scrollIntoView();", approvals_sd);
     // populate the payment type
     try {
         let edit_paymentType = await driver.wait(until.elementLocated(By.xpath("(//span[.='Payment Type'])[last()]/following::button[1]/span[1]")), 15000);
@@ -474,6 +465,9 @@ export const quotelineTest = async(quoteId, ownerId, approverId, quantity, disco
         console.log('Population of payment type failed!');
     }
 
+    // 
+    await driver.navigate().refresh();
+
     // navigate to opp
     try {
         let navigate_to_opp = await driver.wait(until.elementLocated(By.xpath("//span[.='Opportunity']/following::a[1]")), 15000);
@@ -484,13 +478,13 @@ export const quotelineTest = async(quoteId, ownerId, approverId, quantity, disco
     }
 
     // scroll down
-    let key_fields = await driver.findElement(By.xpath("//*[.='Key Fields']"));
-    driver.executeScript("arguments[0].scrollIntoView();", key_fields);
+    let details = await driver.findElement(By.xpath("//a[.='Details']"));
+    await driver.executeScript("arguments[0].scrollIntoView();", details);
     await driver.sleep(2000);
 
     // set stage to sales complete
     try {
-        let edit_stage = await driver.wait(until.elementLocated(By.xpath("(//span[.='Stage'])[last()]/following::button[2]/span")), 15000);
+        let edit_stage = await driver.wait(until.elementLocated(By.xpath("(//span[.='Stage'])[last()]/following::button[2]/span[1]")), 15000);
         await driver.sleep(2000);
         await driver.actions().click(edit_stage).perform();
         await driver.sleep(2000);
@@ -521,7 +515,7 @@ export const quotelineTest = async(quoteId, ownerId, approverId, quantity, disco
 
     // scroll down
     let decommission_details = await driver.findElement(By.xpath("//span[.='Secondary Decommission Reason']"));
-    driver.executeScript("arguments[0].scrollIntoView();", decommission_details);
+    await driver.executeScript("arguments[0].scrollIntoView();", decommission_details);
     await driver.sleep(2000);
 
     // check the finance checklist complete
