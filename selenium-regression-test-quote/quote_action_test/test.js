@@ -79,6 +79,7 @@ export const quotesTest = async(quoteId, action, ownerId, driver, stage) => {
  
       // submit for approval
       await driver.sleep(3000);
+      await driver.navigate().refresh();
       await driver.wait(until.elementLocated(By.xpath("//button[@name='SBQQ__Quote__c.AASubmit']")), 15000)
         .click()
         .then(() => {
@@ -193,6 +194,7 @@ export const quotesTest = async(quoteId, action, ownerId, driver, stage) => {
  
       // click recall button
       await driver.sleep(3000);
+      await driver.navigate().refresh();
       await (await driver.wait(until.elementLocated(By.xpath("//button[@name='SBQQ__Quote__c.AARecall']")),10000))
         .click()
         .then(() => console.log("Recalled!"));
