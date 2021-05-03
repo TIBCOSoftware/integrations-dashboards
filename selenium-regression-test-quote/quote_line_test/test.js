@@ -429,8 +429,7 @@ export const quotelineTest = async(quoteId, ownerId, approverId, quantity, disco
     await driver.sleep(2000);
     await switchAccount(quoteId, 'logout', driver, approverId);
 
-    // checkout shopify url
-    await checkout(quoteId, driver);
+    
 
     // // log in owner
     // await (await driver).get('https://tibcocpq--sandbox.lightning.force.com/lightning/r/SBQQ__Quote__c/'+ quoteId + '/view');
@@ -536,7 +535,8 @@ export const quotelineTest = async(quoteId, ownerId, approverId, quantity, disco
         console.log('Check finance checklist complete failed!' + e);
     }
 
-
+    // checkout shopify url
+    await checkout(quoteId, driver);
 
 
     // // Validate Quote Lines (Line Status & Product Name)
