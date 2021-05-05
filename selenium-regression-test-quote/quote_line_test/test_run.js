@@ -27,3 +27,5 @@ const test_run = async() => {
     // quoteId, ownerId, approverId, quantity, discount, license_model, driver
     await quotelineTest(args[0], args[1], args[2], args[3], args[4], arg_5, driver);
 }
+
+test_run();

@@ -18,3 +18,5 @@ const test_run = async() => {
     await quotesTest(args[0], args[1], args[2], driver);
     await (await driver).quit();
 }
+
+test_run();
