@@ -4,39 +4,25 @@ import 'chromedriver';
 import dotenv from 'dotenv';
 dotenv.config();
 
-const account = process.env.ACCOUNT;
-const password = process.env.PASSWORD;
-let driver = new Builder().forBrowser('chrome').build();
-
-// Initialization
-const Initialization = async(driver) => {
-    // Open the sandbox
-    await (await driver).manage().setTimeouts({ implicit:10000 });
-    await driver.get('https://tibcocpq--sandbox.lightning.force.com/lightning/page/home');
-
-    // Log in with email and password
-    await driver.findElement(By.css('#email')).sendKeys(account);
-    await driver.findElement(By.css('#next')).click();
-    await driver.wait(until.elementLocated(By.css('#password'))).sendKeys(password);
-    await driver.wait(until.elementLocated(By.css('#taLogin'))).click();
-}
-
 export const checkout = async(quoteId, driver) => {
     // await Initialization(driver);
     await (await driver).get('https://tibcocpq--sandbox.lightning.force.com/lightning/r/SBQQ__Quote__c/'+ quoteId + '/view');
     // wait for shopifyURL to be populated
+    await driver.sleep(50000);
+    await driver.navigate().refresh();
+    await driver.sleep(2000);
     let shopifyURL = await driver.findElements(By.xpath("//span[.='Proceed to Order']"));
     let isPopulated = shopifyURL.length !== 0;
     let count = 1;
     while (!isPopulated) {
-        await driver.sleep(4000);
         console.log('Try ' + count + ' times!');
+        await driver.sleep(4000);
         await driver.navigate().refresh();
-        count++;
         await driver.sleep(2000);
+        count++;
         shopifyURL = await driver.findElements(By.xpath("//span[.='Proceed to Order']"));
         isPopulated = shopifyURL.length !== 0;
-        if (count === 5) {
+        if (count === 10) {
             throw new Error('ShopfyURL is not populated!');
         }
     }
