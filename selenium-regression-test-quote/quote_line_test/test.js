@@ -1,7 +1,8 @@
 import pkg from 'selenium-webdriver';
 const {Builder, By, Key, until} = pkg;
-import { quotesTest, switchAccount } from '../quote_action_test/test.js';
-import { checkout } from '../helper_test/checkout';
+import { quotesTest } from '../quote_action_test/test.js';
+import { checkout } from '../helper_test/checkout.js';
+import { switchAccount } from '../helper_test/switchAccount.js';
 import 'chromedriver';
 import dotenv from 'dotenv';
 dotenv.config();
@@ -388,46 +389,8 @@ export const quotelineTest = async(quoteId, ownerId, approverId, quantity, disco
     // submit for approval
     await quotesTest(quoteId, 'submit', ownerId, driver);
 
-    // login approver
-    await switchAccount(quoteId, 'login', driver, approverId);
-
-    // scroll down
-    let Element = await driver.findElement(By.xpath("//div/span[. = 'Status']/following::lightning-formatted-text"));
-    await driver.executeScript("arguments[0].scrollIntoView();", Element);
-    await driver.sleep(5000);
-
-    // Approve this quote
-    try {
-        let approvals = await driver.wait(until.elementLocated(By.xpath("//span[@title='Approvals']")), 20000);
-        await (await driver).sleep(2000);
-        await driver.actions().click(approvals).perform();
-        await (await driver).sleep(2000);
-        let approve = await driver.wait(until.elementLocated(By.xpath("(//tr/td[5][.='Requested'])[1]/preceding::th[1]/span/span/a[1]")), 20000);
-        await (await driver).sleep(2000);
-        await driver.actions().click(approve).perform();
-        await (await driver).sleep(2000);
-        // await (await driver.wait(until.elementLocated(By.xpath("//lightning-button/button[.='Approve']")), 20000)).click();
-        // await (await driver).sleep(2000);
-        // await (await driver.wait(until.elementLocated(By.xpath("//textarea")), 20000)).sendKeys("Approved");
-        // await (await driver).sleep(2000);
-        await (await driver).switchTo().defaultContent();
-        const frame_approve = await driver.wait(until.elementLocated(By.xpath("//iframe")));
-        await (await driver).switchTo().frame(frame_approve);
-        let final_approve = await driver.wait(until.elementLocated(By.xpath("//input[@value='Approve']")), 20000);
-        await (await driver).sleep(2000);
-        await driver.actions().click(final_approve).perform();
-        console.log('Quote approved!')
-    }
-    catch (e) {
-        console.log('Approve quote failed!' + e);
-        process.exit(1);
-    }
-    await (await driver).sleep(5000);
-
-    // log out approver
-    await (await driver).get('https://tibcocpq--sandbox.lightning.force.com/lightning/r/SBQQ__Quote__c/'+ quoteId + '/view');
-    await driver.sleep(2000);
-    await switchAccount(quoteId, 'logout', driver, approverId);
+    // approve this quote
+    await approveQuote(quoteId, approverId, driver);
 
     
 
@@ -435,6 +398,9 @@ export const quotelineTest = async(quoteId, ownerId, approverId, quantity, disco
     // await (await driver).get('https://tibcocpq--sandbox.lightning.force.com/lightning/r/SBQQ__Quote__c/'+ quoteId + '/view');
     // await driver.sleep(2000);
     // await switchAccount(quoteId, 'login', driver, ownerId);
+
+    // checkout shopify url
+    await checkout(quoteId, driver);
 
 
     // scroll down
@@ -535,8 +501,7 @@ export const quotelineTest = async(quoteId, ownerId, approverId, quantity, disco
         console.log('Check finance checklist complete failed!' + e);
     }
 
-    // checkout shopify url
-    await checkout(quoteId, driver);
+    
 
 
     // // Validate Quote Lines (Line Status & Product Name)
@@ -658,4 +623,43 @@ export const quotelineTest = async(quoteId, ownerId, approverId, quantity, disco
 const checkEachLine = async(quoteId) => {
     await driver.get("https://tibcocpq--sandbox.lightning.force.com/lightning/r/" + quoteId + "/related/SBQQ__LineItems__r/view")
 
+}
+
+const approveQuote = async(quoteId, approverId, driver) => {
+    // login approver
+    await switchAccount(quoteId, 'login', driver, approverId);
+
+    // scroll down
+    let Element = await driver.findElement(By.xpath("//div/span[. = 'Status']/following::lightning-formatted-text"));
+    await driver.executeScript("arguments[0].scrollIntoView();", Element);
+    await driver.sleep(5000);
+
+    // Approve this quote
+    try {
+        let approvals = await driver.wait(until.elementLocated(By.xpath("//span[@title='Approvals']")), 20000);
+        await (await driver).sleep(2000);
+        await driver.actions().click(approvals).perform();
+        await (await driver).sleep(2000);
+        let approve = await driver.wait(until.elementLocated(By.xpath("(//tr/td[5][.='Requested'])[1]/preceding::th[1]/span/span/a[1]")), 20000);
+        await (await driver).sleep(2000);
+        await driver.actions().click(approve).perform();
+        await (await driver).sleep(2000);
+        await (await driver).switchTo().defaultContent();
+        const frame_approve = await driver.wait(until.elementLocated(By.xpath("//iframe")));
+        await (await driver).switchTo().frame(frame_approve);
+        let final_approve = await driver.wait(until.elementLocated(By.xpath("//input[@value='Approve']")), 20000);
+        await (await driver).sleep(2000);
+        await driver.actions().click(final_approve).perform();
+        console.log('Quote approved!')
+    }
+    catch (e) {
+        console.log('Approve quote failed!' + e);
+        process.exit(1);
+    }
+    await (await driver).sleep(5000);
+
+    // log out approver
+    await (await driver).get('https://tibcocpq--sandbox.lightning.force.com/lightning/r/SBQQ__Quote__c/'+ quoteId + '/view');
+    await driver.sleep(2000);
+    await switchAccount(quoteId, 'logout', driver, approverId);
 }
