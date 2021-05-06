@@ -8,8 +8,8 @@ export const checkout = async(quoteId, driver) => {
     // await Initialization(driver);
     await (await driver).get('https://tibcocpq--sandbox.lightning.force.com/lightning/r/SBQQ__Quote__c/'+ quoteId + '/view');
     // wait for shopifyURL to be populated
-    await driver.sleep(50000);
-    await driver.navigate().refresh();
+    // await driver.sleep(50000);
+    // await driver.navigate().refresh();
     await driver.sleep(2000);
     let shopifyURL = await driver.findElements(By.xpath("//span[.='Proceed to Order']"));
     let isPopulated = shopifyURL.length !== 0;
@@ -97,14 +97,124 @@ export const checkout = async(quoteId, driver) => {
         console.log('Changind email failed!' + e);
     }
 
-    // continue to checkout
+    // check company is read only
     try {
-        let continue_to_checkout = await driver.wait(until.elementLocated(By.xpath("//span[.='Continue to shipping']")),15000);
-        await driver.actions().click(continue_to_checkout).perform();
-
-        console.log('Continue to checkout...');
+        await driver.wait(until.elementLocated(By.xpath("//div[@data-address-field='company']/div/input")),15000)
+            .getAttribute("readonly")
+            .then(text => {
+                if (text) {
+                    console.log('Company is read only!');
+                }
+                else {
+                    throw new Error ('Company is not read only!');
+                }
+            })
     }
     catch(e) {
-        console.log('Changind email failed!' + e);
+        console.log(e);
+        process.exit(1);
+    }
+
+    // get state and zip code
+    try {
+        let state_select = await driver.wait(until.elementLocated(By.xpath("//select[@placeholder='State']")),15000);
+        let zip_code = await driver.wait(until.elementLocated(By.xpath("//input[@placeholder='ZIP code']")),15000);
+        await state_select.getAttribute('value')
+            .then(text => {
+                console.log('State: ' + text);
+            });
+        await zip_code.getAttribute('value')
+            .then(text => {
+                console.log('Zip Code: ' + text);
+            });
+    }
+    catch(e) {
+        console.log('Getting state and zip code failed' + e);
+    }
+
+    // continue to shipping
+    try {
+        let continue_to_shipping = await driver.wait(until.elementLocated(By.xpath("//span[.='Continue to shipping']")),15000);
+        await driver.actions().click(continue_to_shipping).perform();
+
+        console.log('Continue to shipping...');
+    }
+    catch(e) {
+        console.log('Shipping failed!' + e);
+    }
+
+    // continue to payment
+    try {
+        let continue_to_payment = await driver.wait(until.elementLocated(By.xpath("//span[.='Continue to payment']")),15000);
+        await driver.actions().click(continue_to_payment).perform();
+
+        console.log('Continue to payment...');
+    }
+    catch(e) {
+        console.log('Payment failed!' + e);
+    }
+
+    // select order form
+    try {
+        let order_form = await driver.wait(until.elementLocated(By.xpath("//label[contains(text(), 'Order Form')]")),15000);
+        await driver.actions().click(order_form).perform();
+
+        console.log('Select Order Form');
+    }
+    catch(e) {
+        console.log('Selecting order form failed!' + e);
+    }
+
+    // use a different billing address and check company is read only
+    // try {
+    //     let change_address = await driver.wait(until.elementLocated(By.xpath("//label[contains(text(), 'different billing address')]")),15000);
+    //     await driver.actions().click(change_address).perform();
+
+    //     console.log('Use a different billing address');
+    // }
+    // catch(e) {
+    //     console.log(e);
+    // }
+
+    // try {
+    //     await driver.wait(until.elementLocated(By.xpath("//input[@placeholder='Company']")),15000)
+    //         .getAttribute("readonly")
+    //         .then(text => {
+    //             if (text) {
+    //                 console.log('Company is read only!');
+    //             }
+    //             else {
+    //                 throw new Error ('Company is not read only!');
+    //             }
+    //         })
+    // }
+    // catch(e) {
+    //     console.log(e);
+    //     process.exit(1);
+    // }
+
+    // pay now
+    try {
+        let pay_now = await driver.wait(until.elementLocated(By.xpath("//span[.='Complete order']")),15000);
+        await driver.actions().click(pay_now).perform();
+
+        console.log('Continue to payment...');
+    }
+    catch(e) {
+        console.log('Payment failed!' + e);
+    }
+
+    // switch tab
+    try {
+        let tabs = await driver.getAllWindowHandles();
+        await driver.switchTo().window(tabs[0]);
+    }
+    catch(e) {
+        console.log("Switching tab failed!" + e);
+        process.exit(1);
     }
 }
+
+// check that user cannot change company name
+// check address and zip code
+// process.exit(1)
