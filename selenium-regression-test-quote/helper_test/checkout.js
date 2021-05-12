@@ -5,11 +5,12 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 export const checkout = async(quoteId, driver) => {
-    // await Initialization(driver);
+    // checkout shopify url
     await (await driver).get('https://tibcocpq--sandbox.lightning.force.com/lightning/r/SBQQ__Quote__c/'+ quoteId + '/view');
     // wait for shopifyURL to be populated
-    // await driver.sleep(50000);
-    // await driver.navigate().refresh();
+    console.log('Sleep for one minute until we get the Shopify URL...')
+    await driver.sleep(5000);
+    await driver.navigate().refresh();
     await driver.sleep(2000);
     let shopifyURL = await driver.findElements(By.xpath("//span[.='Proceed to Order']"));
     let isPopulated = shopifyURL.length !== 0;
@@ -167,32 +168,32 @@ export const checkout = async(quoteId, driver) => {
     }
 
     // use a different billing address and check company is read only
-    try {
-        let change_address = await driver.wait(until.elementLocated(By.xpath("//label[contains(text(), 'different billing address')]")),15000);
-        await driver.actions().click(change_address).perform();
+    // try {
+    //     let change_address = await driver.wait(until.elementLocated(By.xpath("//label[contains(text(), 'different billing address')]")),15000);
+    //     await driver.actions().click(change_address).perform();
 
-        console.log('Use a different billing address');
-    }
-    catch(e) {
-        console.log(e);
-    }
+    //     console.log('Use a different billing address');
+    // }
+    // catch(e) {
+    //     console.log(e);
+    // }
 
-    try {
-        await driver.wait(until.elementLocated(By.xpath("//input[@placeholder='Company']")),15000)
-            .getAttribute("readonly")
-            .then(text => {
-                if (text) {
-                    console.log('Company is read only!');
-                }
-                else {
-                    throw new Error ('Company is not read only!');
-                }
-            })
-    }
-    catch(e) {
-        console.log(e);
-        process.exit(1);
-    }
+    // try {
+    //     await driver.wait(until.elementLocated(By.xpath("//input[@placeholder='Company']")),15000)
+    //         .getAttribute("readonly")
+    //         .then(text => {
+    //             if (text) {
+    //                 console.log('Company is read only!');
+    //             }
+    //             else {
+    //                 throw new Error ('Company is not read only!');
+    //             }
+    //         })
+    // }
+    // catch(e) {
+    //     console.log(e);
+    //     process.exit(1);
+    // }
 
     // pay now
     try {
@@ -215,7 +216,3 @@ export const checkout = async(quoteId, driver) => {
         process.exit(1);
     }
 }
-
-// check that user cannot change company name
-// check address and zip code
-// process.exit(1)
