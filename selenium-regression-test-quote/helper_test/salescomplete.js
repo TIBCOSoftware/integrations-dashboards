@@ -3,6 +3,7 @@ const {Builder, By, Key, until} = pkg;
 import 'chromedriver';
 import dotenv from 'dotenv';
 dotenv.config();
+import { switchAccount } from './switchAccount.js';
 
 export const sales_complete = async(quoteId, operationId, driver) => {
     // log in as the operation

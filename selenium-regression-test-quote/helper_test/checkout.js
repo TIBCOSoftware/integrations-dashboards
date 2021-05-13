@@ -123,11 +123,13 @@ export const checkout = async(quoteId, driver) => {
     try {
         let state_select = await driver.wait(until.elementLocated(By.xpath("//select[@placeholder='State']")),15000);
         let zip_code = await driver.wait(until.elementLocated(By.xpath("//input[@placeholder='ZIP code']")),15000);
+        await driver.actions().click(state_select).sendKeys('California').perform();
+        await zip_code.clear();
+        await driver.actions().click(zip_code).sendKeys('94304').perform();
         await state_select.getAttribute('value')
             .then(text => {
                 console.log('State: ' + text);
             });
-        await driver.actions().click(state_select).sendKeys('California').perform()
         await zip_code.getAttribute('value')
             .then(text => {
                 console.log('Zip Code: ' + text);
