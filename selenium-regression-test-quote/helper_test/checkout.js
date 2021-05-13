@@ -51,6 +51,7 @@ export const checkout = async(quoteId, driver) => {
     console.log('Switching tab...');
     try {
         let tabs = await driver.getAllWindowHandles();
+        console.log(tabs);
         await driver.switchTo().window(tabs[1]);
     }
     catch(e) {
