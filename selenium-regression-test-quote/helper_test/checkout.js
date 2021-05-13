@@ -10,24 +10,36 @@ export const checkout = async(quoteId, driver) => {
     // wait for shopifyURL to be populated
     console.log('Sleep for one minute until we get the Shopify URL...')
     await driver.sleep(5000);
-    await driver.navigate().refresh();
+    // await driver.navigate().refresh();
     await driver.sleep(2000);
-    let shopifyURL = await driver.findElements(By.xpath("//span[.='Proceed to Order']"));
+    let shopifyURL = [];
+    try {
+        shopifyURL = await driver.findElements(By.xpath("//span[.='Proceed to Order']"));
+    }
+    catch(e) {
+        console.log('Waiting for the shopify url...');
+    }
     let isPopulated = shopifyURL.length !== 0;
     let count = 1;
-    while (!isPopulated) {
-        console.log('Try ' + count + ' times!');
-        await driver.sleep(4000);
-        await driver.navigate().refresh();
-        await driver.sleep(2000);
-        count++;
-        shopifyURL = await driver.findElements(By.xpath("//span[.='Proceed to Order']"));
-        isPopulated = shopifyURL.length !== 0;
-        if (count === 10) {
-            throw new Error('ShopfyURL is not populated!');
+    try {
+        while (!isPopulated) {
+            console.log('Try ' + count + ' times!');
+            await driver.sleep(4000);
+            await driver.navigate().refresh();
+            await driver.sleep(2000);
+            count++;
+            shopifyURL = await driver.findElements(By.xpath("//span[.='Proceed to Order']"));
+            isPopulated = shopifyURL.length !== 0;
+            if (count === 10) {
+                throw new Error('ShopfyURL is not populated!');
+            }
         }
+        console.log('ShopifyURL is populated!');
     }
-    console.log('ShopifyURL is populated!');
+    catch (e) {
+        console.log(e);
+    }
+    
 
     // go to shopifyURL
     await driver.sleep(5000);
