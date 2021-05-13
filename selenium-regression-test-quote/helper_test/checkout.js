@@ -48,14 +48,18 @@ export const checkout = async(quoteId, driver) => {
 
     // switch tab
     await driver.sleep(5000);
+    console.log('Switching tab...');
     try {
         let tabs = await driver.getAllWindowHandles();
+        console.log(tabs);
         await driver.switchTo().window(tabs[1]);
     }
     catch(e) {
         console.log("Switching tab failed!" + e);
         process.exit(1);
     }
+
+    process.exit(1);
     
     // refresh to close popup
     await driver.sleep(5000);
@@ -238,3 +242,7 @@ export const checkout = async(quoteId, driver) => {
         process.exit(1);
     }
 }
+
+// check that user cannot change company name
+// check address and zip code
+// process.exit(1)
