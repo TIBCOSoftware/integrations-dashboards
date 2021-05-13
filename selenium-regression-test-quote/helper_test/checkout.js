@@ -44,14 +44,13 @@ export const checkout = async(quoteId, driver) => {
     // go to shopifyURL
     await driver.sleep(5000);
     let navigate_to_shopify = await driver.wait(until.elementLocated(By.xpath("//a[.='Proceed to Order']")),10000);
-    await driver.actions().click(navigate_to_shopify).perform();
+    await driver.actions().contextClick(navigate_to_shopify).sendKeys(Key.ARROW_DOWN).sendKeys(Key.ENTER).perform();
 
     // switch tab
     await driver.sleep(5000);
     console.log('Switching tab...');
     try {
         let tabs = await driver.getAllWindowHandles();
-        console.log(tabs);
         await driver.switchTo().window(tabs[1]);
     }
     catch(e) {
@@ -59,8 +58,6 @@ export const checkout = async(quoteId, driver) => {
         process.exit(1);
     }
 
-    process.exit(1);
-    
     // refresh to close popup
     await driver.sleep(5000);
     console.log('closing popup...');
