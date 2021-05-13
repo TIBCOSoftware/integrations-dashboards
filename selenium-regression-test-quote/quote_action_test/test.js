@@ -74,8 +74,8 @@ export const quotesTest = async(quoteId, action, ownerId, driver, stage) => {
  
       // log in with the owner account
       await switchAccount(quoteId, 'login', driver, ownerId);
-      await driver.sleep(3000);
-      await driver.navigate().refresh();
+      // await driver.sleep(3000);
+      // await driver.navigate().refresh();
  
       // submit for approval
       await driver.sleep(2000);
@@ -98,8 +98,8 @@ export const quotesTest = async(quoteId, action, ownerId, driver, stage) => {
  
       // check current account log out
       await switchAccount(quoteId, 'logout', driver, ownerId);
-      await driver.sleep(3000);
-      await driver.navigate().refresh();
+      // await driver.sleep(3000);
+      // await driver.navigate().refresh();
       
       // check status & recordType after submission
       try {
@@ -193,8 +193,8 @@ export const quotesTest = async(quoteId, action, ownerId, driver, stage) => {
  
       // log in with the owner account
       await switchAccount(quoteId, 'login', driver, ownerId);
-      await driver.sleep(3000);
-      await driver.navigate().refresh();
+      // await driver.sleep(3000);
+      // await driver.navigate().refresh();
  
       // click recall button
       await driver.sleep(2000);
@@ -215,8 +215,8 @@ export const quotesTest = async(quoteId, action, ownerId, driver, stage) => {
  
       // log out
       await switchAccount(quoteId, 'logout', driver, ownerId);
-      await driver.sleep(3000);
-      await driver.navigate().refresh();
+      // await driver.sleep(3000);
+      // await driver.navigate().refresh();
  
       // check status & recordType after recalled
       try {
