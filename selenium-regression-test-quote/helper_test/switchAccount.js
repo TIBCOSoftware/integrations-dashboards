@@ -24,6 +24,7 @@ export const switchAccount = async (quoteId, action, driver, userId) => {
     catch (e) {
         console.log("Check current account failed!");
         console.log(e);
+        process.exit(1);
     }
     await driver.sleep(2000);
 
@@ -91,5 +92,7 @@ export const switchAccount = async (quoteId, action, driver, userId) => {
         await (await driver).get('https://tibcocpq--sandbox.lightning.force.com/lightning/r/SBQQ__Quote__c/' + quoteId + '/view');
     }
     console.log(action + ' completed!');
-    await (await driver).sleep(5000);
+    await driver.sleep(5000);
+    await driver.navigate().refresh();
+    await driver.sleep(3000);
 }

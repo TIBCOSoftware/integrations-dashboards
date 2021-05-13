@@ -37,9 +37,9 @@ export const sales_complete = async(quoteId, operationId, driver) => {
     }
     catch (e) {
         console.log('Population of payment type failed!');
+        process.exit(1);
     }
 
-    // 
     await driver.sleep(5000);
     await driver.navigate().refresh();
 
@@ -50,6 +50,7 @@ export const sales_complete = async(quoteId, operationId, driver) => {
     }
     catch(e) {
         console.log('Navigate to opp failed!' + e);
+        process.exit(1);
     }
 
     // scroll down
@@ -85,6 +86,7 @@ export const sales_complete = async(quoteId, operationId, driver) => {
     }
     catch(e) {
         console.log('Set stage failed!' + e);
+        process.exit(1);
     }
 
     // scroll down
@@ -108,6 +110,7 @@ export const sales_complete = async(quoteId, operationId, driver) => {
     }
     catch(e) {
         console.log('Check finance checklist complete failed!' + e);
+        process.exit(1);
     }
 
     // log out

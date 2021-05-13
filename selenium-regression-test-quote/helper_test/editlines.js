@@ -20,7 +20,7 @@ export const edit_lines = async(quoteId, ownerId, quantity, discount, license_mo
     catch(e) {
         const text = await (await driver.wait(until.elementLocated(By.xpath("//div/span[. = 'Status']/following::lightning-formatted-text")), 20000)).getText();
         console.log("Status checked failed, Status - expected: Draft, value: " + text);
-        driver.quit();
+        process.exit(1);
     }
 
     // Get start date, end date Net Amount and Total ACV
@@ -47,7 +47,7 @@ export const edit_lines = async(quoteId, ownerId, quantity, discount, license_mo
     }
     catch (e) {
         console.log(e);
-        driver.quit();
+        process.exit(1);
     }
 
     // Switch iframe
@@ -60,7 +60,7 @@ export const edit_lines = async(quoteId, ownerId, quantity, discount, license_mo
     }
     catch (e) {
         console.log(e);
-        driver.quit();
+        process.exit(1);
     }
 
     // Validate start date and end date
@@ -79,7 +79,7 @@ export const edit_lines = async(quoteId, ownerId, quantity, discount, license_mo
     catch(e) {
         const text = await (await driver.wait(until.elementLocated(By.xpath("(//div[@tooltip='Start Date']/following::input[@id='selectedDate'])[1]")), 20000)).getAttribute('value');
         console.log("Start Date checked failed, Start Date - expected: " + startDate + ", value: " + text);
-        driver.quit();
+        process.exit(1);
     }
 
     try {
@@ -97,7 +97,7 @@ export const edit_lines = async(quoteId, ownerId, quantity, discount, license_mo
     catch(e) {
         const text = await (await driver.wait(until.elementLocated(By.xpath("(//div[@tooltip='End Date']/following::input[@id='selectedDate'])[1]")), 20000)).getAttribute('value');
         console.log("End Date checked failed, End Date - expected: " + endDate + ", value: " + text);
-        driver.quit();
+        process.exit(1);
     }
 
     // Click add product button
@@ -113,7 +113,7 @@ export const edit_lines = async(quoteId, ownerId, quantity, discount, license_mo
     }
     catch (e) {
         console.log(e);
-        driver.quit();
+        process.exit(1);
     }
 
     // Pick up the first product with License Model "Subscription"
@@ -123,7 +123,7 @@ export const edit_lines = async(quoteId, ownerId, quantity, discount, license_mo
     catch (e) {
         console.log("No product with License Model " + "\"" +license_model + "\"" + "!");
         console.log(e);
-        driver.quit();
+        process.exit(1);
     }
 
     // Get price and name
@@ -141,14 +141,12 @@ export const edit_lines = async(quoteId, ownerId, quantity, discount, license_mo
     }
     catch (e) {
         console.log(e);
-        driver.quit();
+        process.exit(1);
     }
 
     // index (Perpetual License)
     let index = 'last()';
     if (license_model === 'Perpetual License') index = 'last()-1';
-    // Get net tatal
-    const net_total = await (await driver.wait(until.elementLocated(By.xpath("(//div[@field='Net_Total_Bundle__c'])[" + index + "]/div")), 20000)).getText();
 
     // Validate name
     try {
@@ -168,9 +166,11 @@ export const edit_lines = async(quoteId, ownerId, quantity, discount, license_mo
     catch(e) {
         const text = await (await driver.wait(until.elementLocated(By.xpath("(//div[@field='SBQQ__ProductName__c'])[" + index + "]/div/span[last()]")), 20000)).getText();
         console.log("Product Name checked failed, Product Name - expected: " + name + ", value: " + text);
-        driver.quit();
+        process.exit(1);
     }
 
+    // Get net tatal
+    const net_total = await (await driver.wait(until.elementLocated(By.xpath("(//div[@index='8'])[" + index + "]/div")), 20000)).getText();
     // Validate unit price
     try {
         await (await driver.wait(until.elementLocated(By.xpath("(//div[@field='Base_Unit_Price__c'])[" + index + "]/div")), 20000))
@@ -185,7 +185,7 @@ export const edit_lines = async(quoteId, ownerId, quantity, discount, license_mo
     catch(e) {
         const text = await (await driver.wait(until.elementLocated(By.xpath("(//div[@field='Uplifted_Customer_Base_Total__c'])[" + index + "]/div")), 20000)).getText();
         console.log("Product Price checked failed before calculation, Product Price - expected: " + price + ", value: " + text);
-        driver.quit();
+        process.exit(1);
     }
 
     // Input the quantity
@@ -199,7 +199,7 @@ export const edit_lines = async(quoteId, ownerId, quantity, discount, license_mo
     catch(e) {
         console.log("Update quantity failed!");
         console.log(e);
-        // driver.quit();
+        process.exit(1);
     }
 
     // Input the discount
@@ -213,7 +213,7 @@ export const edit_lines = async(quoteId, ownerId, quantity, discount, license_mo
     catch(e) {
         console.log("Update discount failed!");
         console.log(e);
-        // driver.quit();
+        process.exit(1);
     }
 
     // Find the first renewed line & Change the quantity to 0
@@ -227,7 +227,7 @@ export const edit_lines = async(quoteId, ownerId, quantity, discount, license_mo
     catch(e) {
         console.log("Cancellation failed!");
         console.log(e);
-        // driver.quit();
+        process.exit(1);
     }
 
     // Click calculate
@@ -237,7 +237,7 @@ export const edit_lines = async(quoteId, ownerId, quantity, discount, license_mo
 
     // Validate net total after the calculation
     try {
-        await (await driver.wait(until.elementLocated(By.xpath("(//div[@field='Net_Total_Bundle__c'])[" + index + "]/div")), 20000))
+        await (await driver.wait(until.elementLocated(By.xpath("(//div[@index='8'])[" + index + "]/div")), 20000))
             .getText()
             .then((text) => {
                 const nums_before = net_total.split(" ")[1].split(",");
@@ -259,7 +259,7 @@ export const edit_lines = async(quoteId, ownerId, quantity, discount, license_mo
             });
     }
     catch(e) {
-        const text = await (await driver.wait(until.elementLocated(By.xpath("(//div[@field='Net_Total_Bundle__c'])[" + index + "]/div")), 20000)).getText();
+        const text = await (await driver.wait(until.elementLocated(By.xpath("(//div[@index='8'])[" + index + "]/div")), 20000)).getText();
         const nums_before = net_total.split(" ")[1].split(",");
         const nums_after = text.split(" ")[1].split(",");
         let net_total_before = '';
@@ -269,7 +269,7 @@ export const edit_lines = async(quoteId, ownerId, quantity, discount, license_mo
         let total1 = (((100-discount)/100 * net_total_before).toFixed(2) * quantity).toFixed(2);
         let total2 = parseFloat(net_total_after).toFixed(2);
         console.log("Net total check failed after calculation, Net Total - expected: USD " + total1 + ", value: USD " + total2);
-        driver.quit();
+        process.exit(1);
     }
 
     // Validate Maintenance if license model is perpetual liscense !!!
@@ -284,7 +284,8 @@ export const edit_lines = async(quoteId, ownerId, quantity, discount, license_mo
         if (src.includes('error')) console.log("Red Flag!");
     }
     catch(e) {
-        console.log(e);
+        console.log('Red Flad Failed!' + e);
+        process.exit(1);
     }
 
     // Click save

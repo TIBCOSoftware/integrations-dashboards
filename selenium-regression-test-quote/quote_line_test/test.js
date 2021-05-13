@@ -130,3 +130,6 @@ const approveQuote = async(quoteId, approverId, driver) => {
     await driver.sleep(2000);
     await switchAccount(quoteId, 'logout', driver, approverId);
 }
+
+// checkout
+// node test_run a0p1I0000095NRXQA2 0051I000000dzesQAA 0051I000001yEr7QAE 0051I000006NbUOQA0 2 30 Subscription

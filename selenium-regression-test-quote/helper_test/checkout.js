@@ -67,6 +67,7 @@ export const checkout = async(quoteId, driver) => {
     }
     catch(e) {
         console.log('Adding a new product failed!' + e);
+        process.exit(1);
     }
    
     // checkout after agreeing the terms
@@ -81,6 +82,7 @@ export const checkout = async(quoteId, driver) => {
     }
     catch(e) {
         console.log('Checkout failed!' + e);
+        process.exit(1);
     }
     
     // change email 
@@ -96,6 +98,7 @@ export const checkout = async(quoteId, driver) => {
     }
     catch(e) {
         console.log('Changind email failed!' + e);
+        process.exit(1);
     }
 
     // check company is read only
@@ -132,6 +135,7 @@ export const checkout = async(quoteId, driver) => {
     }
     catch(e) {
         console.log('Getting state and zip code failed' + e);
+        process.exit(1);
     }
 
     // continue to shipping
@@ -154,6 +158,7 @@ export const checkout = async(quoteId, driver) => {
     }
     catch(e) {
         console.log('Payment failed!' + e);
+        process.exit(1);
     }
 
     // select order form
@@ -165,6 +170,7 @@ export const checkout = async(quoteId, driver) => {
     }
     catch(e) {
         console.log('Selecting order form failed!' + e);
+        process.exit(1);
     }
 
     // use a different billing address and check company is read only
@@ -204,6 +210,7 @@ export const checkout = async(quoteId, driver) => {
     }
     catch(e) {
         console.log('Payment failed!' + e);
+        process.exit(1);
     }
 
     // switch tab
