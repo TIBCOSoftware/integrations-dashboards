@@ -1,6 +1,7 @@
 import { quotelineTest } from './test.js';
 import pkg from 'selenium-webdriver';
 const {Builder, By, Key, until} = pkg;
+import chrome from 'selenium-webdriver/chrome.js';
 import 'chromedriver';
 import dotenv from 'dotenv';
 dotenv.config();
@@ -9,7 +10,14 @@ import { initialization } from '../helper_test/login.js';
 const account = process.env.ACCOUNT;
 const password = process.env.PASSWORD;
 
-let driver = new Builder().forBrowser('chrome').build();
+let options = new chrome.Options();
+options.addArguments("--no-sandbox");
+options.addArguments("--disable-dev-shm-usage");
+
+let driver = new Builder()
+                .forBrowser('chrome')
+                .setChromeOptions(options)
+                .build();
 
 const args = process.argv.slice(2);
 
