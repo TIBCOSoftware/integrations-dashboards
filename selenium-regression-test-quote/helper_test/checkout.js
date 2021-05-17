@@ -44,24 +44,22 @@ export const checkout = async(quoteId, driver) => {
     // go to shopifyURL
     await driver.sleep(5000);
     let navigate_to_shopify = await driver.wait(until.elementLocated(By.xpath("//a[.='Proceed to Order']")),10000);
-    await driver.actions().click(navigate_to_shopify).perform();
-    // await driver.actions().contextClick(navigate_to_shopify).sendKeys(Key.ARROW_DOWN).sendKeys(Key.ENTER).perform();
+    await driver.actions().contextClick(navigate_to_shopify).sendKeys(Key.ARROW_DOWN).sendKeys(Key.ENTER).perform();
 
-    // switch tab
-    await driver.sleep(5000);
-    console.log('Switching tab...');
-    try {
-        let tabs = await driver.getAllWindowHandles();
-        console.log(tabs);
-        await driver.switchTo().window(tabs[1]);
-    }
-    catch(e) {
-        console.log("Switching tab failed!" + e);
-        process.exit(1);
-    }
+    // // switch tab
+    // await driver.sleep(5000);
+    // console.log('Switching tab...');
+    // try {
+    //     let tabs = await driver.getAllWindowHandles();
+    //     await driver.switchTo().window(tabs[1]);
+    // }
+    // catch(e) {
+    //     console.log("Switching tab failed!" + e);
+    //     process.exit(1);
+    // }
 
     // refresh to close popup
-    await driver.sleep(5000);
+    await driver.sleep(8000);
     console.log('closing popup...');
     await driver.navigate().refresh();
     
@@ -231,17 +229,16 @@ export const checkout = async(quoteId, driver) => {
         process.exit(1);
     }
 
-    // switch tab
-    try {
-        let tabs = await driver.getAllWindowHandles();
-        await driver.switchTo().window(tabs[0]);
-    }
-    catch(e) {
-        console.log("Switching tab failed!" + e);
-        process.exit(1);
-    }
-}
+    // // switch tab
+    // try {
+    //     let tabs = await driver.getAllWindowHandles();
+    //     await driver.switchTo().window(tabs[0]);
+    // }
+    // catch(e) {
+    //     console.log("Switching tab failed!" + e);
+    //     process.exit(1);
+    // }
 
-// check that user cannot change company name
-// check address and zip code
-// process.exit(1)
+    await (await driver).get('https://tibcocpq--sandbox.lightning.force.com/lightning/r/SBQQ__Quote__c/'+ quoteId + '/view');
+
+}
