@@ -41,7 +41,7 @@ export const checkout = async(quoteId, driver) => {
     }
 
     // scroll down
-    let opp = await driver.findElement(By.xpath("(//span[.='Opportunity']"));
+    let opp = await driver.findElement(By.xpath("//span[.='Opportunity']"));
     await driver.executeScript("arguments[0].scrollIntoView();", opp);
     console.log('scroll down...');
     await driver.sleep(3000);
