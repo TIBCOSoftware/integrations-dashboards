@@ -39,7 +39,12 @@ export const checkout = async(quoteId, driver) => {
     catch (e) {
         console.log(e);
     }
-    
+
+    // scroll down
+    let opp = await driver.findElement(By.xpath("(//span[.='Opportunity']"));
+    await driver.executeScript("arguments[0].scrollIntoView();", opp);
+    console.log('scroll down...');
+    await driver.sleep(3000);
 
     // go to shopifyURL
     await driver.sleep(5000);
@@ -52,13 +57,14 @@ export const checkout = async(quoteId, driver) => {
     console.log('Switching tab...');
     try {
         let tabs = await driver.getAllWindowHandles();
-        
-        while (tabs.length === 1) {
-            console.log('Tabs： ');
-            console.log(tabs);
+        console.log('Tabs： ');
+        console.log(tabs);
+        if (tabs.length === 1) {
             await driver.actions().click(navigate_to_shopify).perform();
             tabs = await driver.getAllWindowHandles();
         }
+        console.log('Tabs： ');
+        console.log(tabs);
         await driver.switchTo().window(tabs[1]);
     }
     catch(e) {
