@@ -1,4 +1,3 @@
-  
 import pkg from 'selenium-webdriver';
 const {Builder, By, Key, until} = pkg;
 import { quotesTest } from '../quote_action_test/test.js';
@@ -9,7 +8,7 @@ import dotenv from 'dotenv';
 import { edit_lines } from '../helper_test/editlines.js';
 import { sales_complete } from '../helper_test/salescomplete.js';
 dotenv.config();
-
+ 
 // Outline - quotelineTest
   // take quoteId, profile, quantity, discount,license_model and driver as parameters
   // check values in the quote page
@@ -27,10 +26,10 @@ dotenv.config();
   // logout approver
   // login owner
   // check values
-
+ 
   // shopify
 export const quotelineTest = async(quoteId, ownerId, approverId, operationId, quantity, discount, license_model, driver) => {
-
+ 
     // all parameters
     console.log('Quote ID: ' + quoteId);
     console.log('Owner ID: ' + ownerId);
@@ -39,32 +38,32 @@ export const quotelineTest = async(quoteId, ownerId, approverId, operationId, qu
     console.log('Quanity: ' + quantity);
     console.log('Discount: ' + discount);
     console.log('License Model: ' + license_model);
-
-
+ 
+ 
     // Get quote by url (id)
     await (await driver).get('https://tibcocpq--sandbox.lightning.force.com/lightning/r/SBQQ__Quote__c/'+ quoteId + '/view');
-
+ 
     // edit lines
     await edit_lines(quoteId, ownerId, quantity, discount, license_model, driver);
-
+ 
     // submit for approval
     await quotesTest(quoteId, 'submit', ownerId, driver);
-
+ 
     // approve this quote
     let isApprovalRequired = await driver.wait(until.elementLocated(By.xpath("//label[.='Approval Required']/span[1]")), 10000);
     if (isApprovalRequired.isSelected()) {
         await approveQuote(quoteId, approverId, driver);
     }
-
+ 
     // checkout
     await checkout(quoteId, driver);
-
+ 
     // check the new product
     console.log('Sleep for 30 secs...');
     await driver.sleep(30000);
     await (await driver).get('https://tibcocpq--sandbox.lightning.force.com/lightning/r/' + quoteId +'/related/SBQQ__LineItems__r/view');
     console.log("Opening Quote Lines...");
-
+ 
     try{
         await driver.wait(until.elementLocated(By.xpath("(//table/tbody/tr)[last()]/td[3]/span/span")), 15000)
             .getText()
@@ -80,34 +79,39 @@ export const quotelineTest = async(quoteId, ownerId, approverId, operationId, qu
         const text = await driver.wait(until.elementLocated(By.xpath("(//table/tbody/tr)[last()]/td[3]/span/span")), 15000).getText();
         console.log('Adding new product failed, last product - expected: TIBCO Statistica Server (ProdPlus) - Processor - Bronze, value: ' + text);
     }
-
+ 
     // change opp fields
     await sales_complete(quoteId, operationId, driver);
     
     // driver.quit();
 }
-
-
+ 
+ 
 const checkEachLine = async(quoteId) => {
     await driver.get("https://tibcocpq--sandbox.lightning.force.com/lightning/r/" + quoteId + "/related/SBQQ__LineItems__r/view")
-
+ 
 }
-
+ 
 const approveQuote = async(quoteId, approverId, driver) => {
     // login approver
     await switchAccount(quoteId, 'login', driver, approverId);
-
+ 
     // scroll down
-    let Element = await driver.findElement(By.xpath("//div/span[. = 'Status']/following::lightning-formatted-text"));
+    let Element = await driver.findElement(By.xpath("//span[.='Address Information']"));
     await driver.executeScript("arguments[0].scrollIntoView();", Element);
     await driver.sleep(5000);
-
+ 
     // Approve this quote
     try {
         let approvals = await driver.wait(until.elementLocated(By.xpath("//span[@title='Approvals']")), 20000);
         await (await driver).sleep(2000);
         await driver.actions().click(approvals).perform();
+        console.log('Approvals clicked!')
         await (await driver).sleep(2000);
+        let curr_url = await driver.getCurrentUrl().then(url => {
+            return url;
+        })
+        console.log('Current URL: ' + curr_url);
         let approve = await driver.wait(until.elementLocated(By.xpath("(//tr/td[5][.='Requested'])[1]/preceding::th[1]/span/span/a[1]")), 20000);
         await (await driver).sleep(2000);
         await driver.actions().click(approve).perform();
@@ -125,12 +129,13 @@ const approveQuote = async(quoteId, approverId, driver) => {
         process.exit(1);
     }
     await (await driver).sleep(5000);
-
+ 
     // log out approver
     await (await driver).get('https://tibcocpq--sandbox.lightning.force.com/lightning/r/SBQQ__Quote__c/'+ quoteId + '/view');
     await driver.sleep(2000);
     await switchAccount(quoteId, 'logout', driver, approverId);
 }
-
+ 
 // checkout
 // node test_run a0p1I0000095NRXQA2 0051I000000dzesQAA 0051I000001yEr7QAE 0051I000006NbUOQA0 2 30 Subscription
+// node test_run a0p2g000001ZJB9AAO 0051I000006NbUJQA0 0051I000001yEr7QAE 0051I000006NbUOQA0 2 30 Subscription

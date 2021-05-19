@@ -108,6 +108,7 @@ export const sales_complete = async(quoteId, operationId, driver) => {
 
         let save = await driver.wait(until.elementLocated(By.xpath("//button[@name='SaveEdit']")), 15000);
         await driver.actions().click(save).perform();
+        console.log('Finance checklist checked!');
     }
     catch(e) {
         console.log('Check finance checklist complete failed!' + e);
