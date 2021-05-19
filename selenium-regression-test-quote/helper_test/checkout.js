@@ -165,6 +165,7 @@ export const checkout = async(quoteId, driver) => {
         await driver.actions().click(continue_to_shipping).perform();
  
         console.log('Continue to shipping...');
+        await driver.sleep(2000);
     }
     catch(e) {
         console.log('Shipping failed!' + e);
@@ -176,6 +177,7 @@ export const checkout = async(quoteId, driver) => {
         await driver.actions().click(continue_to_payment).perform();
  
         console.log('Continue to payment...');
+        await driver.sleep(2000);
     }
     catch(e) {
         console.log('Payment failed!' + e);
@@ -188,6 +190,7 @@ export const checkout = async(quoteId, driver) => {
         await driver.actions().click(order_form).perform();
  
         console.log('Select Order Form');
+        await driver.sleep(2000);
     }
     catch(e) {
         console.log('Selecting order form failed!' + e);
@@ -228,6 +231,7 @@ export const checkout = async(quoteId, driver) => {
         await driver.actions().click(pay_now).perform();
  
         console.log('Continue to payment...');
+        await driver.sleep(2000);
     }
     catch(e) {
         console.log('Payment failed!' + e);
