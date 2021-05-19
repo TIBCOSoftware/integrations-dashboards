@@ -3,7 +3,9 @@ const {Builder, By, Key, until} = pkg;
 import 'chromedriver';
 import dotenv from 'dotenv';
 dotenv.config();
- 
+
+export let amount = '';
+
 export const checkout = async(quoteId, driver) => {
     // checkout shopify url
     await (await driver).get('https://tibcocpq--sandbox.lightning.force.com/lightning/r/SBQQ__Quote__c/'+ quoteId + '/view');
@@ -44,7 +46,6 @@ export const checkout = async(quoteId, driver) => {
     let opp = await driver.findElement(By.xpath("//span[.='Opportunity']"));
     await driver.executeScript("arguments[0].scrollIntoView();", opp);
     console.log('scroll down...');
-    await driver.sleep(3000);
  
     // go to shopifyURL
     await driver.sleep(5000);
@@ -88,6 +89,16 @@ export const checkout = async(quoteId, driver) => {
         console.log('Adding a new product failed!' + e);
         process.exit(1);
     }
+
+    // // get the subtotal
+    // try {
+    //     const subtotal = await driver.wait(until.elementLocated(By.xpath("//span[@class='money']")), 15000).getText();
+    //     amount = subtotal.substring(1);
+    //     console.log('Subtotal: ' + amount);
+    // }
+    // catch (e) {
+    //     console.log('Can not find subtotal!' + e);
+    // }
    
     // checkout after agreeing the terms
     try {
@@ -165,7 +176,6 @@ export const checkout = async(quoteId, driver) => {
         await driver.actions().click(continue_to_shipping).perform();
  
         console.log('Continue to shipping...');
-        await driver.sleep(2000);
     }
     catch(e) {
         console.log('Shipping failed!' + e);
@@ -177,7 +187,6 @@ export const checkout = async(quoteId, driver) => {
         await driver.actions().click(continue_to_payment).perform();
  
         console.log('Continue to payment...');
-        await driver.sleep(2000);
     }
     catch(e) {
         console.log('Payment failed!' + e);
@@ -190,7 +199,6 @@ export const checkout = async(quoteId, driver) => {
         await driver.actions().click(order_form).perform();
  
         console.log('Select Order Form');
-        await driver.sleep(2000);
     }
     catch(e) {
         console.log('Selecting order form failed!' + e);
@@ -231,7 +239,6 @@ export const checkout = async(quoteId, driver) => {
         await driver.actions().click(pay_now).perform();
  
         console.log('Continue to payment...');
-        await driver.sleep(2000);
     }
     catch(e) {
         console.log('Payment failed!' + e);

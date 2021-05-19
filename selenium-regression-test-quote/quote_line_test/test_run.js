@@ -13,6 +13,7 @@ const password = process.env.PASSWORD;
 let options = new chrome.Options();
 options.addArguments("--no-sandbox");
 options.addArguments("--disable-dev-shm-usage");
+options.addArguments("--incognito");
 
 let driver = new Builder()
                 .forBrowser('chrome')
