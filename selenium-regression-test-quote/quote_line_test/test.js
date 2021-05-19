@@ -1,7 +1,7 @@
 import pkg from 'selenium-webdriver';
 const {Builder, By, Key, until} = pkg;
 import { quotesTest } from '../quote_action_test/test.js';
-import { checkout } from '../helper_test/checkout.js';
+import { amount, checkout } from '../helper_test/checkout.js';
 import { switchAccount } from '../helper_test/switchAccount.js';
 import 'chromedriver';
 import dotenv from 'dotenv';
@@ -54,13 +54,40 @@ export const quotelineTest = async(quoteId, ownerId, approverId, operationId, qu
     if (isApprovalRequired.isSelected()) {
         await approveQuote(quoteId, approverId, driver);
     }
+
+    // // get the net amount
+    // try {
+    //     const net_amount_before = await (await driver.wait(until.elementLocated(By.xpath("//p[.='Net Amount']/following::lightning-formatted-text[1]")), 20000)).getText();
+    //     console.log("Net Amount before checkout: " + net_amount_before);
+    // }
+    // catch (e) {
+    //     console.log('Can not find Net Amount before checkout!');
+    // }
  
     // checkout
-    await checkout(quoteId, driver);
- 
-    // check the new product
+    await checkout(quoteId, driver, amount);
+
+    // sleep
     console.log('Sleep for 30 secs...');
     await driver.sleep(30000);
+    await driver.navigate().refresh();
+
+    // // get the net amount
+    // try {
+    //     const net_amount_after = await (await driver.wait(until.elementLocated(By.xpath("//p[.='Net Amount']/following::lightning-formatted-text[1]")), 20000)).getText();
+    //     let amount2 = net_amount_after.split(" ")[1];
+    //     console.log("Net Amount after checkout: " + amount2);
+    //     console.log(amount);
+    //     if (amount === amount2) {
+    //         console.log('Net Amount checked!')
+    //     }
+    //     else throw new Error('Net Amont not checked!');
+    // }
+    // catch (e) {
+    //     console.log(e);
+    // }
+
+    // check the new product
     await (await driver).get('https://tibcocpq--sandbox.lightning.force.com/lightning/r/' + quoteId +'/related/SBQQ__LineItems__r/view');
     console.log("Opening Quote Lines...");
  
@@ -81,7 +108,7 @@ export const quotelineTest = async(quoteId, ownerId, approverId, operationId, qu
     }
  
     // change opp fields
-    await sales_complete(quoteId, operationId, driver);
+    // await sales_complete(quoteId, operationId, driver);
     
     // driver.quit();
 }
@@ -94,7 +121,7 @@ const checkEachLine = async(quoteId) => {
  
 const approveQuote = async(quoteId, approverId, driver) => {
     // login approver
-    await switchAccount(quoteId, 'login', driver, approverId);
+    // await switchAccount(quoteId, 'login', driver, approverId);
  
     // scroll down
     let Element = await driver.findElement(By.xpath("//span[.='Address Information']"));
@@ -138,4 +165,4 @@ const approveQuote = async(quoteId, approverId, driver) => {
  
 // checkout
 // node test_run a0p1I0000095NRXQA2 0051I000000dzesQAA 0051I000001yEr7QAE 0051I000006NbUOQA0 2 30 Subscription
-// node test_run a0p2g000001ZJB9AAO 0051I000006NbUJQA0 0051I000001yEr7QAE 0051I000006NbUOQA0 2 30 Subscription
+// node test_run a0p2g000001ZJCZAA4 0051I000006NbUJQA0 0051I000001yEr7QAE 0051I000006NbUOQA0 2 30 Subscription
