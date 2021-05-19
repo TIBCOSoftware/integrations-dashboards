@@ -44,16 +44,16 @@ export const quotelineTest = async(quoteId, ownerId, approverId, operationId, qu
     await (await driver).get('https://tibcocpq--sandbox.lightning.force.com/lightning/r/SBQQ__Quote__c/'+ quoteId + '/view');
  
     // edit lines
-    await edit_lines(quoteId, ownerId, quantity, discount, license_model, driver);
+    // await edit_lines(quoteId, ownerId, quantity, discount, license_model, driver);
  
-    // submit for approval
-    await quotesTest(quoteId, 'submit', ownerId, driver);
+    // // submit for approval
+    // await quotesTest(quoteId, 'submit', ownerId, driver);
  
-    // approve this quote
-    let isApprovalRequired = await driver.wait(until.elementLocated(By.xpath("//label[.='Approval Required']/span[1]")), 10000);
-    if (isApprovalRequired.isSelected()) {
-        await approveQuote(quoteId, approverId, driver);
-    }
+    // // approve this quote
+    // let isApprovalRequired = await driver.wait(until.elementLocated(By.xpath("//label[.='Approval Required']/span[1]")), 10000);
+    // if (isApprovalRequired.isSelected()) {
+    //     await approveQuote(quoteId, approverId, driver);
+    // }
  
     // checkout
     await checkout(quoteId, driver);
