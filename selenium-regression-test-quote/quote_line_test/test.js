@@ -121,7 +121,7 @@ const checkEachLine = async(quoteId) => {
  
 const approveQuote = async(quoteId, approverId, driver) => {
     // login approver
-    // await switchAccount(quoteId, 'login', driver, approverId);
+    await switchAccount(quoteId, 'login', driver, approverId);
  
     // scroll down
     let Element = await driver.findElement(By.xpath("//span[.='Address Information']"));
