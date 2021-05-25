@@ -82,8 +82,11 @@ export const checkout = async(quoteId, driver) => {
     
         let view_cart = await driver.wait(until.elementLocated(By.xpath("(//a[contains(text(), 'View cart')])[2]")),15000);
         await driver.actions().click(view_cart).perform();
-        
-        console.log('A new product added!');
+
+        let new_product = await driver.wait(until.elementLocated(By.xpath("//article[1]/div/div/h2")), 15000).getText();
+        if (new_product === 'Statistica™ Server') {
+            console.log('A new product added!');
+        }
     }
     catch(e) {
         console.log('Adding a new product failed!' + e);
@@ -104,11 +107,9 @@ export const checkout = async(quoteId, driver) => {
     try {
         let agreement = await driver.wait(until.elementLocated(By.xpath("//input[@type='checkbox']")),15000);
         await driver.actions().click(agreement).perform();
-        await driver.sleep(2000);
  
         let check_out = await driver.wait(until.elementLocated(By.xpath("//button[@name='checkout']")),15000);
         await driver.actions().click(check_out).perform();
-        await driver.sleep(2000);
  
         console.log('Checking out...');
     }
@@ -122,11 +123,9 @@ export const checkout = async(quoteId, driver) => {
         let email1 = await driver.wait(until.elementLocated(By.xpath("(//input[@type='email'])[1]")),15000);
         await email1.clear();
         await driver.actions().click(email1).sendKeys('checkout_test@tibco.com').perform();
-        await driver.sleep(2000);
  
         let email2 = await driver.wait(until.elementLocated(By.xpath("(//input[@type='email'])[2]")),15000);
         await driver.actions().click(email2).sendKeys('checkout_test@tibco.com').perform();
-        await driver.sleep(2000);
  
         console.log('Email changed!');
     }
@@ -180,7 +179,6 @@ export const checkout = async(quoteId, driver) => {
         await driver.actions().click(continue_to_shipping).perform();
  
         console.log('Continue to shipping...');
-        await driver.sleep(2000);
     }
     catch(e) {
         console.log('Shipping failed!' + e);
@@ -192,7 +190,6 @@ export const checkout = async(quoteId, driver) => {
         await driver.actions().click(continue_to_payment).perform();
  
         console.log('Continue to payment...');
-        await driver.sleep(2000);
     }
     catch(e) {
         console.log('Payment failed!' + e);
@@ -205,7 +202,6 @@ export const checkout = async(quoteId, driver) => {
         await driver.actions().click(order_form).perform();
  
         console.log('Select Order Form');
-        await driver.sleep(2000);
     }
     catch(e) {
         console.log('Selecting order form failed!' + e);
@@ -246,7 +242,6 @@ export const checkout = async(quoteId, driver) => {
         await driver.actions().click(pay_now).perform();
  
         console.log('Continue to payment...');
-        await driver.sleep(2000);
     }
     catch(e) {
         console.log('Payment failed!' + e);
