@@ -189,6 +189,7 @@ export const checkout = async(quoteId, driver) => {
         console.log('Shipping failed!' + e);
     }
  
+    await driver.sleep(2000);
     // continue to payment
     try {
         let continue_to_payment = await driver.wait(until.elementLocated(By.xpath("//span[.='Continue to payment']")),15000);
