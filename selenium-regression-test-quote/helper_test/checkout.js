@@ -71,18 +71,23 @@ export const checkout = async(quoteId, driver) => {
     
     // add a new product to cart
     try {
+        await driver.sleep(2000);
         let searchbar = await driver.wait(until.elementLocated(By.xpath("//input[@placeholder='What are you looking for?']")),15000);
         await driver.actions().click(searchbar).sendKeys('Statistica').perform();
         
+        await driver.sleep(2000);
         let first_product = await driver.wait(until.elementLocated(By.xpath("(//div[@class='search-flydown--product-items'])[2]/a[1]")),15000);
         await driver.actions().click(first_product).perform();
     
+        await driver.sleep(2000);
         let add_to_cart = await driver.wait(until.elementLocated(By.xpath("//button[@type='submit']")),15000);
         await driver.actions().click(add_to_cart).perform();
     
+        await driver.sleep(2000);
         let view_cart = await driver.wait(until.elementLocated(By.xpath("(//a[contains(text(), 'View cart')])[2]")),15000);
         await driver.actions().click(view_cart).perform();
 
+        await driver.sleep(2000);
         let new_product = await driver.wait(until.elementLocated(By.xpath("//article[1]/div/div/h2")), 15000).getText();
         if (new_product === 'Statistica™ Server') {
             console.log('A new product added!');
@@ -184,6 +189,7 @@ export const checkout = async(quoteId, driver) => {
         console.log('Shipping failed!' + e);
     }
  
+    await driver.sleep(2000);
     // continue to payment
     try {
         let continue_to_payment = await driver.wait(until.elementLocated(By.xpath("//span[.='Continue to payment']")),15000);
