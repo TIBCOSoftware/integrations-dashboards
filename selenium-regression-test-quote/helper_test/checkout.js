@@ -3,9 +3,9 @@ const {Builder, By, Key, until} = pkg;
 import 'chromedriver';
 import dotenv from 'dotenv';
 dotenv.config();
-
+ 
 export let amount = '';
-
+ 
 export const checkout = async(quoteId, driver) => {
     // checkout shopify url
     await (await driver).get('https://tibcocpq--sandbox.lightning.force.com/lightning/r/SBQQ__Quote__c/'+ quoteId + '/view');
@@ -70,7 +70,6 @@ export const checkout = async(quoteId, driver) => {
     await driver.navigate().refresh();
     
     // add a new product to cart
-    await driver.sleep(2000);
     try {
         let searchbar = await driver.wait(until.elementLocated(By.xpath("//input[@placeholder='What are you looking for?']")),15000);
         await driver.actions().click(searchbar).sendKeys('Statistica').perform();
@@ -83,7 +82,7 @@ export const checkout = async(quoteId, driver) => {
     
         let view_cart = await driver.wait(until.elementLocated(By.xpath("(//a[contains(text(), 'View cart')])[2]")),15000);
         await driver.actions().click(view_cart).perform();
-
+ 
         let new_product = await driver.wait(until.elementLocated(By.xpath("//article[1]/div/div/h2")), 15000).getText();
         if (new_product === 'Statistica™ Server') {
             console.log('A new product added!');
@@ -93,7 +92,7 @@ export const checkout = async(quoteId, driver) => {
         console.log('Adding a new product failed!' + e);
         process.exit(1);
     }
-
+ 
     // // get the subtotal
     // try {
     //     const subtotal = await driver.wait(until.elementLocated(By.xpath("//span[@class='money']")), 15000).getText();
@@ -198,34 +197,55 @@ export const checkout = async(quoteId, driver) => {
     }
  
     // use a different billing address and check company is read only
-    // await driver.sleep(2000);
-    // try {
-    //     let change_address = await driver.wait(until.elementLocated(By.xpath("//label[contains(text(), 'different billing address')]")),15000);
-    //     await driver.actions().click(change_address).perform();
+    await driver.sleep(2000);
+    try {
+        let change_address = await driver.wait(until.elementLocated(By.xpath("//label[contains(text(), 'different billing address')]")),15000);
+        await driver.actions().click(change_address).perform();
  
-    //     console.log('Use a different billing address');
-    // }
-    // catch(e) {
-    //     console.log(e);
-    // }
+        console.log('Use a different billing address');
+    }
+    catch(e) {
+        console.log(e);
+    }
  
-    // try {
-    //     await driver.wait(until.elementLocated(By.xpath("//input[@placeholder='Company']")),15000)
-    //         .getAttribute("readonly")
-    //         .then(text => {
-    //             if (text) {
-    //                 console.log('Company is read only!');
-    //             }
-    //             else {
-    //                 throw new Error ('Company is not read only!');
-    //             }
-    //         })
-    // }
-    // catch(e) {
-    //     console.log(e);
-    //     process.exit(1);
-    // }
+    try {
+        await driver.wait(until.elementLocated(By.xpath("//input[@placeholder='Company']")),15000)
+            .getAttribute("readonly")
+            .then(text => {
+                if (text) {
+                    console.log('Company is read only!');
+                }
+                else {
+                    throw new Error ('Company is not read only!');
+                }
+            })
+    }
+    catch(e) {
+        console.log(e);
+        process.exit(1);
+    }
 
+    // change state and zip code
+    try {
+        let state_select_ = await driver.wait(until.elementLocated(By.xpath("//select[@placeholder='State']")),15000);
+        let zip_code_ = await driver.wait(until.elementLocated(By.xpath("//input[@placeholder='ZIP code']")),15000);
+        await driver.actions().click(state_select_).sendKeys('California').perform();
+        await zip_code_.clear();
+        await driver.actions().click(zip_code_).sendKeys('94304').perform();
+        await state_select_.getAttribute('value')
+            .then(text => {
+                console.log('State: ' + text);
+            });
+        await zip_code_.getAttribute('value')
+            .then(text => {
+                console.log('Zip Code: ' + text);
+            });
+    }
+    catch(e) {
+        console.log('Getting state and zip code failed' + e);
+        process.exit(1);
+    }
+ 
     // select order form
     await driver.sleep(2000);
     try {
@@ -239,16 +259,10 @@ export const checkout = async(quoteId, driver) => {
         process.exit(1);
     }
  
-    // 
-    let curr_url1 = await driver.getCurrentUrl().then(url => {
-        return url;
-    })
-    console.log('Current URL before complete order: ' + curr_url1);
-
-    // pay now
+    // complete order
     await driver.sleep(2000);
     try {
-        let pay_now = await driver.wait(until.elementLocated(By.xpath("//div[@class='shown-if-js']/button")),15000);
+        let pay_now = await driver.wait(until.elementLocated(By.xpath("//div[@class='shown-if-js']/button/span[.='Complete order']")),15000);
         await driver.executeScript("arguments[0].scrollIntoView();", pay_now);
         await driver.actions().click(pay_now).perform();
  
@@ -258,15 +272,9 @@ export const checkout = async(quoteId, driver) => {
         console.log('Payment failed!' + e);
         process.exit(1);
     }
-
+ 
     // get order number
     await driver.sleep(10000);
-    // 
-    let curr_url2 = await driver.getCurrentUrl().then(url => {
-        return url;
-    })
-    console.log('Current URL after complete order: ' + curr_url2);
-
     try {
         let order_number = await driver.wait(until.elementLocated(By.xpath("//span[@class='os-order-number']")),15000).getText();
         console.log('Order Number: ' + order_number);
@@ -275,7 +283,6 @@ export const checkout = async(quoteId, driver) => {
         console.log('No order number!' + e);
         process.exit(1);
     }
-
  
     // switch tab
     try {
