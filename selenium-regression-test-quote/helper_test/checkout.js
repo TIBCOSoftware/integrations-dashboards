@@ -248,7 +248,7 @@ export const checkout = async(quoteId, driver) => {
     // pay now
     await driver.sleep(2000);
     try {
-        let pay_now = await driver.wait(until.elementLocated(By.xpath("//div[@class='shown-if-js']/button/span[.='Complete order']")),15000);
+        let pay_now = await driver.wait(until.elementLocated(By.xpath("//div[@class='shown-if-js']/button/")),15000);
         await driver.executeScript("arguments[0].scrollIntoView();", pay_now);
         await driver.actions().click(pay_now).perform();
  
