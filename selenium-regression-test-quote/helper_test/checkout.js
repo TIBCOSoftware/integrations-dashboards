@@ -197,6 +197,7 @@ export const checkout = async(quoteId, driver) => {
     }
  
     // select order form
+    await driver.sleep(2000);
     try {
         let order_form = await driver.wait(until.elementLocated(By.xpath("//label[contains(text(), 'Order Form')]")),15000);
         await driver.actions().click(order_form).perform();
@@ -209,6 +210,7 @@ export const checkout = async(quoteId, driver) => {
     }
  
     // use a different billing address and check company is read only
+    await driver.sleep(2000);
     try {
         let change_address = await driver.wait(until.elementLocated(By.xpath("//label[contains(text(), 'different billing address')]")),15000);
         await driver.actions().click(change_address).perform();
@@ -237,11 +239,12 @@ export const checkout = async(quoteId, driver) => {
     }
  
     // pay now
+    await driver.sleep(2000);
     try {
         let pay_now = await driver.wait(until.elementLocated(By.xpath("//span[.='Complete order']")),15000);
         await driver.actions().click(pay_now).perform();
  
-        console.log('Continue to payment...');
+        console.log('Complete Order...');
     }
     catch(e) {
         console.log('Payment failed!' + e);
