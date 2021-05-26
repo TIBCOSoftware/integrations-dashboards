@@ -68,9 +68,9 @@ export const quotelineTest = async(quoteId, ownerId, approverId, operationId, qu
     await checkout(quoteId, driver, amount);
 
     // sleep
-    console.log('Sleep for 30 secs...');
-    await driver.sleep(30000);
-    await driver.navigate().refresh();
+    // console.log('Sleep for 30 secs...');
+    // await driver.sleep(30000);
+    // await driver.navigate().refresh();
 
     // // get the net amount
     // try {
@@ -88,24 +88,24 @@ export const quotelineTest = async(quoteId, ownerId, approverId, operationId, qu
     // }
 
     // check the new product
-    await (await driver).get('https://tibcocpq--sandbox.lightning.force.com/lightning/r/' + quoteId +'/related/SBQQ__LineItems__r/view');
-    console.log("Opening Quote Lines...");
+    // await (await driver).get('https://tibcocpq--sandbox.lightning.force.com/lightning/r/' + quoteId +'/related/SBQQ__LineItems__r/view');
+    // console.log("Opening Quote Lines...");
  
-    try{
-        await driver.wait(until.elementLocated(By.xpath("(//table/tbody/tr)[last()]/td[3]/span/span")), 15000)
-            .getText()
-            .then(text => {
-                if (text === 'TIBCO Statistica Server (ProdPlus) - Processor - Bronze') {
-                    console.log('New product added!');
-                    console.log('New product: ' + text);
-                }
-                else throw new Error('Product Price does not match!');
-            });
-    }
-    catch(e) {
-        const text = await driver.wait(until.elementLocated(By.xpath("(//table/tbody/tr)[last()]/td[3]/span/span")), 15000).getText();
-        console.log('Adding new product failed, last product - expected: TIBCO Statistica Server (ProdPlus) - Processor - Bronze, value: ' + text);
-    }
+    // try{
+    //     await driver.wait(until.elementLocated(By.xpath("(//table/tbody/tr)[last()]/td[3]/span/span")), 15000)
+    //         .getText()
+    //         .then(text => {
+    //             if (text === 'TIBCO Statistica Server (ProdPlus) - Processor - Bronze') {
+    //                 console.log('New product added!');
+    //                 console.log('New product: ' + text);
+    //             }
+    //             else throw new Error('Product Price does not match!');
+    //         });
+    // }
+    // catch(e) {
+    //     const text = await driver.wait(until.elementLocated(By.xpath("(//table/tbody/tr)[last()]/td[3]/span/span")), 15000).getText();
+    //     console.log('Adding new product failed, last product - expected: TIBCO Statistica Server (ProdPlus) - Processor - Bronze, value: ' + text);
+    // }
  
     // change opp fields
     // await sales_complete(quoteId, operationId, driver);
@@ -165,4 +165,4 @@ const approveQuote = async(quoteId, approverId, driver) => {
  
 // checkout
 // node test_run a0p1I0000095NRXQA2 0051I000000dzesQAA 0051I000001yEr7QAE 0051I000006NbUOQA0 2 30 Subscription
-// node test_run a0p2g000001ZJCZAA4 0051I000006NbUJQA0 0051I000001yEr7QAE 0051I000006NbUOQA0 2 30 Subscription
+// node test_run a0p2g000001ZJIIAA4 0051I000006NbUJQA0 0051I000001yEr7QAE 0051I000006NbUOQA0 2 30 Subscription 
