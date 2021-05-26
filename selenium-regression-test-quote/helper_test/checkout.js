@@ -196,19 +196,6 @@ export const checkout = async(quoteId, driver) => {
         process.exit(1);
     }
  
-    // select order form
-    await driver.sleep(2000);
-    try {
-        let order_form = await driver.wait(until.elementLocated(By.xpath("//label[contains(text(), 'Order Form')]")),15000);
-        await driver.actions().click(order_form).perform();
- 
-        console.log('Select Order Form');
-    }
-    catch(e) {
-        console.log('Selecting order form failed!' + e);
-        process.exit(1);
-    }
- 
     // use a different billing address and check company is read only
     await driver.sleep(2000);
     try {
@@ -237,6 +224,19 @@ export const checkout = async(quoteId, driver) => {
         console.log(e);
         process.exit(1);
     }
+
+    // select order form
+    await driver.sleep(2000);
+    try {
+        let order_form = await driver.wait(until.elementLocated(By.xpath("//label[contains(text(), 'Order Form')]")),15000);
+        await driver.actions().click(order_form).perform();
+ 
+        console.log('Select Order Form');
+    }
+    catch(e) {
+        console.log('Selecting order form failed!' + e);
+        process.exit(1);
+    }
  
     // 
     let curr_url1 = await driver.getCurrentUrl().then(url => {
@@ -248,6 +248,7 @@ export const checkout = async(quoteId, driver) => {
     await driver.sleep(2000);
     try {
         let pay_now = await driver.wait(until.elementLocated(By.xpath("//div[@class='shown-if-js']/button/span[.='Complete order']")),15000);
+        await driver.executeScript("arguments[0].scrollIntoView();", pay_now);
         await driver.actions().click(pay_now).perform();
  
         console.log('Complete Order...');
