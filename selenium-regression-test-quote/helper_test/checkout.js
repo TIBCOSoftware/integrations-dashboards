@@ -247,7 +247,7 @@ export const checkout = async(quoteId, driver) => {
     // pay now
     await driver.sleep(2000);
     try {
-        let pay_now = await driver.wait(until.elementLocated(By.xpath("//span[.='Complete order']")),15000);
+        let pay_now = await driver.wait(until.elementLocated(By.xpath("//div[@class='shown-if-js']/button/span[.='Complete order']")),15000);
         await driver.actions().click(pay_now).perform();
  
         console.log('Complete Order...');
@@ -259,19 +259,21 @@ export const checkout = async(quoteId, driver) => {
 
     // get order number
     await driver.sleep(10000);
+    // 
+    let curr_url2 = await driver.getCurrentUrl().then(url => {
+        return url;
+    })
+    console.log('Current URL after complete order: ' + curr_url2);
+
     try {
         let order_number = await driver.wait(until.elementLocated(By.xpath("//span[@class='os-order-number']")),15000).getText();
         console.log('Order Number: ' + order_number);
     }
     catch (e) {
         console.log('No order number!' + e);
+        process.exit(1);
     }
 
-    // 
-    let curr_url2 = await driver.getCurrentUrl().then(url => {
-        return url;
-    })
-    console.log('Current URL after complete order: ' + curr_url2);
  
     // switch tab
     try {
