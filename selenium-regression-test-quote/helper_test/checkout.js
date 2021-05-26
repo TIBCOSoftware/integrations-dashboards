@@ -238,6 +238,12 @@ export const checkout = async(quoteId, driver) => {
         process.exit(1);
     }
  
+    // 
+    let curr_url1 = await driver.getCurrentUrl().then(url => {
+        return url;
+    })
+    console.log('Current URL before complete order: ' + curr_url1);
+
     // pay now
     await driver.sleep(2000);
     try {
@@ -260,6 +266,12 @@ export const checkout = async(quoteId, driver) => {
     catch (e) {
         console.log('No order number!' + e);
     }
+
+    // 
+    let curr_url2 = await driver.getCurrentUrl().then(url => {
+        return url;
+    })
+    console.log('Current URL after complete order: ' + curr_url2);
  
     // switch tab
     try {
