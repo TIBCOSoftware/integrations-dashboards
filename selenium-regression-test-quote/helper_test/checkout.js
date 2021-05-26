@@ -197,33 +197,33 @@ export const checkout = async(quoteId, driver) => {
     }
  
     // use a different billing address and check company is read only
-    await driver.sleep(2000);
-    try {
-        let change_address = await driver.wait(until.elementLocated(By.xpath("//label[contains(text(), 'different billing address')]")),15000);
-        await driver.actions().click(change_address).perform();
+    // await driver.sleep(2000);
+    // try {
+    //     let change_address = await driver.wait(until.elementLocated(By.xpath("//label[contains(text(), 'different billing address')]")),15000);
+    //     await driver.actions().click(change_address).perform();
  
-        console.log('Use a different billing address');
-    }
-    catch(e) {
-        console.log(e);
-    }
+    //     console.log('Use a different billing address');
+    // }
+    // catch(e) {
+    //     console.log(e);
+    // }
  
-    try {
-        await driver.wait(until.elementLocated(By.xpath("//input[@placeholder='Company']")),15000)
-            .getAttribute("readonly")
-            .then(text => {
-                if (text) {
-                    console.log('Company is read only!');
-                }
-                else {
-                    throw new Error ('Company is not read only!');
-                }
-            })
-    }
-    catch(e) {
-        console.log(e);
-        process.exit(1);
-    }
+    // try {
+    //     await driver.wait(until.elementLocated(By.xpath("//input[@placeholder='Company']")),15000)
+    //         .getAttribute("readonly")
+    //         .then(text => {
+    //             if (text) {
+    //                 console.log('Company is read only!');
+    //             }
+    //             else {
+    //                 throw new Error ('Company is not read only!');
+    //             }
+    //         })
+    // }
+    // catch(e) {
+    //     console.log(e);
+    //     process.exit(1);
+    // }
 
     // select order form
     await driver.sleep(2000);
