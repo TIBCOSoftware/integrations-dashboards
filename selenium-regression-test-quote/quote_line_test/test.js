@@ -72,20 +72,20 @@ export const quotelineTest = async(quoteId, ownerId, approverId, operationId, qu
     await driver.sleep(30000);
     await driver.navigate().refresh();
 
-    // get the net amount
-    try {
-        const net_amount_after = await (await driver.wait(until.elementLocated(By.xpath("//p[.='Net Amount']/following::lightning-formatted-text[1]")), 20000)).getText();
-        let amount2 = net_amount_after.split(" ")[1];
-        console.log("Net Amount after checkout: " + amount2);
-        console.log(amount);
-        if (amount === amount2) {
-            console.log('Net Amount checked!')
-        }
-        else throw new Error('Net Amont not checked!');
-    }
-    catch (e) {
-        console.log(e);
-    }
+    // // get the net amount
+    // try {
+    //     const net_amount_after = await (await driver.wait(until.elementLocated(By.xpath("//p[.='Net Amount']/following::lightning-formatted-text[1]")), 20000)).getText();
+    //     let amount2 = net_amount_after.split(" ")[1];
+    //     console.log("Net Amount after checkout: " + amount2);
+    //     console.log(amount);
+    //     if (amount === amount2) {
+    //         console.log('Net Amount checked!')
+    //     }
+    //     else throw new Error('Net Amont not checked!');
+    // }
+    // catch (e) {
+    //     console.log(e);
+    // }
 
     // check the new product
     await (await driver).get('https://tibcocpq--sandbox.lightning.force.com/lightning/r/' + quoteId +'/related/SBQQ__LineItems__r/view');
