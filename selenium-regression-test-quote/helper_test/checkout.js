@@ -70,6 +70,7 @@ export const checkout = async(quoteId, driver) => {
     await driver.navigate().refresh();
     
     // add a new product to cart
+    await driver.sleep(2000);
     try {
         let searchbar = await driver.wait(until.elementLocated(By.xpath("//input[@placeholder='What are you looking for?']")),15000);
         await driver.actions().click(searchbar).sendKeys('Statistica').perform();
