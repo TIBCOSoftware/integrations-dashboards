@@ -296,5 +296,5 @@ export const checkout = async(quoteId, driver) => {
     }
  
     await (await driver).get('https://tibcocpq--sandbox.lightning.force.com/lightning/r/SBQQ__Quote__c/'+ quoteId + '/view');
- 
+
 }
