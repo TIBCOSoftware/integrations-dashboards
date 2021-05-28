@@ -111,7 +111,6 @@ export const quotelineTest = async(quoteId, ownerId, approverId, operationId, qu
     await sales_complete(quoteId, operationId, driver);
     
     driver.close();
-    driver.quit();
 }
  
  
