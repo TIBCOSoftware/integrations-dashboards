@@ -185,6 +185,7 @@ export const checkout = async(quoteId, driver) => {
     }
  
     // continue to payment
+    await driver.sleep(3000);
     try {
         let continue_to_payment = await driver.wait(until.elementLocated(By.xpath("//span[.='Continue to payment']")),15000);
         await driver.actions().click(continue_to_payment).perform();
