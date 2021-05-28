@@ -110,7 +110,8 @@ export const quotelineTest = async(quoteId, ownerId, approverId, operationId, qu
     // change opp fields
     await sales_complete(quoteId, operationId, driver);
     
-    driver.close();
+    // driver.close();
+    driver.quit();
 }
  
  
