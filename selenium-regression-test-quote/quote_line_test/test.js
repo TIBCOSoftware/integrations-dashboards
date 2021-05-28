@@ -44,68 +44,68 @@ export const quotelineTest = async(quoteId, ownerId, approverId, operationId, qu
     await (await driver).get('https://tibcocpq--sandbox.lightning.force.com/lightning/r/SBQQ__Quote__c/'+ quoteId + '/view');
  
     // edit lines
-    await edit_lines(quoteId, ownerId, quantity, discount, license_model, driver);
+    // await edit_lines(quoteId, ownerId, quantity, discount, license_model, driver);
  
-    // submit for approval
-    await quotesTest(quoteId, 'submit', ownerId, driver);
+    // // submit for approval
+    // await quotesTest(quoteId, 'submit', ownerId, driver);
  
-    // approve this quote
-    let isApprovalRequired = await driver.wait(until.elementLocated(By.xpath("//label[.='Approval Required']/span[1]")), 10000);
-    if (isApprovalRequired.isSelected()) {
-        await approveQuote(quoteId, approverId, driver);
-    }
-
-    // get the net amount
-    try {
-        const net_amount_before = await (await driver.wait(until.elementLocated(By.xpath("//p[.='Net Amount']/following::lightning-formatted-text[1]")), 20000)).getText();
-        console.log("Net Amount before checkout: " + net_amount_before);
-    }
-    catch (e) {
-        console.log('Can not find Net Amount before checkout!');
-    }
- 
-    // checkout
-    await checkout(quoteId, driver, amount);
-
-    // sleep
-    console.log('Sleep for 30 secs...');
-    await driver.sleep(30000);
-    await driver.navigate().refresh();
+    // // approve this quote
+    // let isApprovalRequired = await driver.wait(until.elementLocated(By.xpath("//label[.='Approval Required']/span[1]")), 10000);
+    // if (isApprovalRequired.isSelected()) {
+    //     await approveQuote(quoteId, approverId, driver);
+    // }
 
     // // get the net amount
     // try {
-    //     const net_amount_after = await (await driver.wait(until.elementLocated(By.xpath("//p[.='Net Amount']/following::lightning-formatted-text[1]")), 20000)).getText();
-    //     let amount2 = net_amount_after.split(" ")[1];
-    //     console.log("Net Amount after checkout: " + amount2);
-    //     console.log(amount);
-    //     if (amount === amount2) {
-    //         console.log('Net Amount checked!')
-    //     }
-    //     else throw new Error('Net Amont not checked!');
+    //     const net_amount_before = await (await driver.wait(until.elementLocated(By.xpath("//p[.='Net Amount']/following::lightning-formatted-text[1]")), 20000)).getText();
+    //     console.log("Net Amount before checkout: " + net_amount_before);
     // }
     // catch (e) {
-    //     console.log(e);
+    //     console.log('Can not find Net Amount before checkout!');
     // }
-
-    // check the new product
-    await (await driver).get('https://tibcocpq--sandbox.lightning.force.com/lightning/r/' + quoteId +'/related/SBQQ__LineItems__r/view');
-    console.log("Opening Quote Lines...");
  
-    try{
-        await driver.wait(until.elementLocated(By.xpath("(//table/tbody/tr)[last()]/td[3]/span/span")), 15000)
-            .getText()
-            .then(text => {
-                if (text === 'TIBCO Statistica Server (ProdPlus) - Processor - Bronze') {
-                    console.log('New product added!');
-                    console.log('New product: ' + text);
-                }
-                else throw new Error('Product Price does not match!');
-            });
-    }
-    catch(e) {
-        const text = await driver.wait(until.elementLocated(By.xpath("(//table/tbody/tr)[last()]/td[3]/span/span")), 15000).getText();
-        console.log('Adding new product failed, last product - expected: TIBCO Statistica Server (ProdPlus) - Processor - Bronze, value: ' + text);
-    }
+    // // checkout
+    // await checkout(quoteId, driver, amount);
+
+    // // sleep
+    // console.log('Sleep for 30 secs...');
+    // await driver.sleep(30000);
+    // await driver.navigate().refresh();
+
+    // // // get the net amount
+    // // try {
+    // //     const net_amount_after = await (await driver.wait(until.elementLocated(By.xpath("//p[.='Net Amount']/following::lightning-formatted-text[1]")), 20000)).getText();
+    // //     let amount2 = net_amount_after.split(" ")[1];
+    // //     console.log("Net Amount after checkout: " + amount2);
+    // //     console.log(amount);
+    // //     if (amount === amount2) {
+    // //         console.log('Net Amount checked!')
+    // //     }
+    // //     else throw new Error('Net Amont not checked!');
+    // // }
+    // // catch (e) {
+    // //     console.log(e);
+    // // }
+
+    // // check the new product
+    // await (await driver).get('https://tibcocpq--sandbox.lightning.force.com/lightning/r/' + quoteId +'/related/SBQQ__LineItems__r/view');
+    // console.log("Opening Quote Lines...");
+ 
+    // try{
+    //     await driver.wait(until.elementLocated(By.xpath("(//table/tbody/tr)[last()]/td[3]/span/span")), 15000)
+    //         .getText()
+    //         .then(text => {
+    //             if (text === 'TIBCO Statistica Server (ProdPlus) - Processor - Bronze') {
+    //                 console.log('New product added!');
+    //                 console.log('New product: ' + text);
+    //             }
+    //             else throw new Error('Product Price does not match!');
+    //         });
+    // }
+    // catch(e) {
+    //     const text = await driver.wait(until.elementLocated(By.xpath("(//table/tbody/tr)[last()]/td[3]/span/span")), 15000).getText();
+    //     console.log('Adding new product failed, last product - expected: TIBCO Statistica Server (ProdPlus) - Processor - Bronze, value: ' + text);
+    // }
  
     // change opp fields
     await sales_complete(quoteId, operationId, driver);
